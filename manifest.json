@@ -1,11 +1,14 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "brakeline-formatter",
+	"name": "Brakeline Formatter",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "An autoformatter that imposes a character limit for each line of text.",
+	"author": "patriacaelum",
+	"authorUrl": "https://github.com/patriacaelum",
+	"fundingUrl": {
+		"Buy Me A Coffee": "https://www.buymeacoffee.com/patriacaelum",
+		"Ko-Fi": "https://ko-fi.com/patriacaelum"
+	},
 	"isDesktopOnly": false
 }
