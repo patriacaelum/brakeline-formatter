@@ -1,54 +1,5 @@
-import { App, Editor, MarkdownView, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
-
-abstract class MatchGroup {
-	// The raw string value
-	text: string;
-	// The nominal length of the formatted string value, not the length of the
-	// raw string value
-	length?: number;
-}
-
-
-class StringGroup extends MatchGroup {
-	constructor(text: string) {
-		super();
-
-		this.text = text;
-		this.length = text.length;
-	}
-}
-
-
-class MarkdownLinkGroup extends MatchGroup {
-	constructor(text: string) {
-		super();
-
-		// TODO: check this regex
-		const match = text.match(/\[(.*?)\]/);
-
-		this.text = text;
-
-		if (match) {
-			this.length = match.length;
-		}
-	}
-}
-
-class WikilinkGroup extends MatchGroup {
-	constructor(text: string) {
-		super();
-
-		// TODO: check this regex
-		const match = text.match(/\[.*?|(.*?)\]/);
-
-		this.text = text;
-
-		if (match) {
-			this.length = match.length;
-		}
-	}
-}
+import { App, Editor, MarkdownView, Plugin, PluginManifest, PluginSettingTab, Setting } from 'obsidian';
+import { MatchGroup, StringGroup, MarkdownLinkGroup, WikilinkGroup } from 'matchgroup';
 
 
 interface BrakelineFormatterSettings {
@@ -69,6 +20,12 @@ const DEFAULT_SETTINGS: BrakelineFormatterSettings = {
 
 export default class BrakelineFormatter extends Plugin {
 	settings: BrakelineFormatterSettings;
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest);
+
+		this.settings = DEFAULT_SETTINGS;
+	}
 
 	async onload() {
 		// Runs whenever the user starts using the plugin
@@ -205,10 +162,11 @@ export default class BrakelineFormatter extends Plugin {
 		const re_markdown: RegExp = /\[.*?\]\(.*?\)/g;
 
 		const not_links: string[] = text.split(re_markdown);
-		let links = text.match(re_markdown);
+		let links: string[] = [];
+		let matches = text.match(re_markdown);
 
-		if (!links) {
-			links = [];
+		if (matches) {
+			links = matches;
 		}
 
 		const i_max: number = Math.max(not_links.length, links.length);
@@ -216,11 +174,11 @@ export default class BrakelineFormatter extends Plugin {
 
 		for (let i = 0; i < i_max; i++) {
 			if (i < not_links.length) {
-				result.push(StringGroup(not_links[i]));
+				result.push(new StringGroup(not_links[i]));
 			}
 
 			if (i < links.length) {
-				result.push(MarkdownLinkGroup(links[i]));
+				result.push(new MarkdownLinkGroup(links[i]));
 			}
 		}
 
@@ -230,23 +188,24 @@ export default class BrakelineFormatter extends Plugin {
 	splitWikilink(text: string): MatchGroup[] {
 		const re_wikilink: RegExp = /\[\[.*?\]\]/g;
 
-		const not_links: stirng[] = text.split(re_wikilink);
-		let links = text.match(re_wikilink);
+		const not_links: string[] = text.split(re_wikilink);
+		let links: string[] = [];
+		let matches = text.match(re_wikilink);
 
-		if (!links) {
-			links = [];
+		if (matches) {
+			links = matches;
 		}
 
 		const i_max: number = Math.max(not_links.length, links.length);
 		let result: MatchGroup[] = [];
 
 		for (let i = 0; i < i_max; i++) {
-			if (i < not_links.lenght) {
-				result.push(StringGroup(not_links[i]));
+			if (i < not_links.length) {
+				result.push(new StringGroup(not_links[i]));
 			}
 
 			if (i < links.length) {
-				result.push(Wikilink(links[i]));
+				result.push(new WikilinkGroup(links[i]));
 			}
 		}
 
@@ -286,7 +245,7 @@ class BrakelineFormatterSettingTab extends PluginSettingTab {
 			.setDesc("If enabled, wikilink style links will not count toward the character limit")
 			.addToggle(val => val
 				.setValue(this.plugin.settings.ignoreWikiLinks)
-				.onChange(async (value: bool) => {
+				.onChange(async (value: boolean) => {
 					this.plugin.settings.ignoreWikiLinks = value;
 					await this.plugin.saveSettings();
 				})
@@ -297,7 +256,7 @@ class BrakelineFormatterSettingTab extends PluginSettingTab {
 			.setDesc("If enabled, markdown style links will not count toward the character limit")
 			.addToggle(val => val
 				.setValue(this.plugin.settings.ignoreMarkdownLinks)
-				.onChange(async (value: bool) => {
+				.onChange(async (value: boolean) => {
 					this.plugin.settings.ignoreMarkdownLinks = value;
 					await this.plugin.saveSettings();
 				})
