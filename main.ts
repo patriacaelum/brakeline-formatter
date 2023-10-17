@@ -1,7 +1,7 @@
 import { App, Editor, MarkdownView, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 
-interface MatchGroup {
+abstract class MatchGroup {
 	// The raw string value
 	text: string;
 	// The nominal length of the formatted string value, not the length of the
@@ -10,20 +10,24 @@ interface MatchGroup {
 }
 
 
-class StringGroup implements MatchGroup {
+class StringGroup extends MatchGroup {
 	constructor(text: string) {
+		super();
+
 		this.text = text;
 		this.length = text.length;
 	}
 }
 
 
-class MarkdownLinkGroup implements MatchGroup {
+class MarkdownLinkGroup extends MatchGroup {
 	constructor(text: string) {
-		this.text = text;
+		super();
 
 		// TODO: check this regex
 		const match = text.match(/\[(.*?)\]/);
+
+		this.text = text;
 
 		if (match) {
 			this.length = match.length;
@@ -31,12 +35,14 @@ class MarkdownLinkGroup implements MatchGroup {
 	}
 }
 
-class WikilinkGroup implements MatchGroup {
+class WikilinkGroup extends MatchGroup {
 	constructor(text: string) {
-		this.text = text;
+		super();
 
 		// TODO: check this regex
 		const match = text.match(/\[.*?|(.*?)\]/);
+
+		this.text = text;
 
 		if (match) {
 			this.length = match.length;
@@ -46,9 +52,9 @@ class WikilinkGroup implements MatchGroup {
 
 
 interface BrakelineFormatterSettings {
-	characterLimit: int;
-	ignoreWikiLinks: bool;
-	ignoreMarkdownLinks: bool;
+	characterLimit: number;
+	ignoreWikiLinks: boolean;
+	ignoreMarkdownLinks: boolean;
 	// formatOnEdit: bool
 }
 
@@ -153,7 +159,7 @@ export default class BrakelineFormatter extends Plugin {
 		let indent: number = 0;
 
 		// Add indent for notes
-		if (trimmed.startsWith('- ')) {
+		if (text.startsWith('- ')) {
 			indent += 2;
 		}
 
@@ -183,9 +189,9 @@ export default class BrakelineFormatter extends Plugin {
 	): MatchGroup[] {
 		let result: MatchGroup[] = [];
 
-		for (group of groups) {
+		for (const group of groups) {
 			if (group instanceof StringGroup) {
-				result += splitCallback(group.text);
+				result.push(...splitCallback(group.text));
 			}
 			else {
 				result.push(group);
