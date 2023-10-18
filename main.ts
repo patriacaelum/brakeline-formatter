@@ -1,4 +1,12 @@
-import { App, Editor, MarkdownView, Plugin, PluginManifest, PluginSettingTab, Setting } from 'obsidian';
+import {
+	App,
+	Editor,
+	MarkdownView,
+	Plugin,
+	PluginManifest,
+	PluginSettingTab,
+	Setting
+} from 'obsidian';
 import { StringGroup, MarkdownLinkGroup, WikilinkGroup } from './stringgroup';
 
 
@@ -36,7 +44,8 @@ export default class BrakelineFormatter extends Plugin {
 			name: "Run autoformatter",
 			editorCallback: (editor: Editor) => {
 				// Only run if in markdown
-				const is_markdown = this.app.workspace.getActiveViewOfType(MarkdownView);
+				const is_markdown = this.app.workspace
+					.getActiveViewOfType(MarkdownView);
 
 				if (!is_markdown) {
 					return;
@@ -138,78 +147,6 @@ export default class BrakelineFormatter extends Plugin {
 		}
 
 		return '';
-	}
-
-	splitGroups(
-		groups: StringGroup[],
-		splitCallback: (text: string) => StringGroup[]
-	): StringGroup[] {
-		let result: StringGroup[] = [];
-
-		for (const group of groups) {
-			if (group instanceof StringGroup) {
-				result.push(...splitCallback(group.text));
-			}
-			else {
-				result.push(group);
-			}
-		}
-
-		return result;
-	}
-
-	splitMarkdownLink(text: string): StringGroup[] {
-		const re_markdown: RegExp = /\[.*?\]\(.*?\)/g;
-
-		const not_links: string[] = text.split(re_markdown);
-		let links: string[] = [];
-		let matches = text.match(re_markdown);
-
-		if (matches) {
-			links = matches;
-		}
-
-		const i_max: number = Math.max(not_links.length, links.length);
-		let result: StringGroup[] = [];
-
-		for (let i = 0; i < i_max; i++) {
-			if (i < not_links.length) {
-				result.push(new StringGroup(not_links[i]));
-			}
-
-			if (i < links.length) {
-				result.push(new MarkdownLinkGroup(links[i]));
-			}
-		}
-
-		return result;
-	}
-
-	splitWikilink(text: string): StringGroup[] {
-		const re_wikilink: RegExp = /\[\[.*?\]\]/g;
-
-		const not_links: string[] = text.split(re_wikilink);
-		let links: string[] = [];
-		let matches = text.match(re_wikilink);
-
-		if (matches) {
-			links = matches;
-		}
-
-		const i_max: number = Math.max(not_links.length, links.length);
-		let result: StringGroup[] = [];
-
-		for (let i = 0; i < i_max; i++) {
-			if (i < not_links.length) {
-				result.push(new StringGroup(not_links[i]));
-			}
-
-			if (i < links.length) {
-				result.push(new WikilinkGroup(links[i]));
-			}
-		}
-
-		return result;
 	}
 }
 

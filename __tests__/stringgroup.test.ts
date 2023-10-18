@@ -1,5 +1,5 @@
 import {
-	StringGroupError,
+	MatchGroupError,
 	StringGroup,
 	MarkdownLinkGroup,
 	WikilinkGroup,
@@ -7,8 +7,8 @@ import {
 
 
 const display: string = 'a dream is a wish your heart makes';
-const outgoing_link: string = 'https://pinocchiosonglyrics.com';
-const internal_link: string = 'internal#link to heading'
+const outgoing_link: string = 'https://cinderellasonglyrics.com';
+const internal_link: string = 'songs#from cinderella';
 
 
 describe('StringGroup', () => {
@@ -33,7 +33,7 @@ describe('StringGroup', () => {
 describe('MarkdownLinkGroup', () => {
 	test('empty string', () => {
 		const text: string = '';
-		expect(() => new MarkdownLinkGroup(text)).toThrow(StringGroupError);
+		expect(() => new MarkdownLinkGroup(text)).toThrow(MatchGroupError);
 	});
 
 	test('empty text and empty link', () => {
@@ -73,7 +73,7 @@ describe('MarkdownLinkGroup', () => {
 describe('WikilinkGroup', () => {
 	test('empty string', () => {
 		const text: string = '';
-		expect(() => new WikilinkGroup(text)).toThrow(StringGroupError);
+		expect(() => new WikilinkGroup(text)).toThrow(MatchGroupError);
 	});
 
 	test('empty text and empty link', () => {

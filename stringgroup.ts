@@ -1,7 +1,10 @@
-export class StringGroupError extends Error {};
+export class MatchGroupError extends Error {};
 
 
-export class StringGroup {
+export abstract class MatchGroup {
+	// The regular expression used to find this MatchGroup in a string
+	static regexp: RegExp = /.*?/;
+
 	// The raw string value
 	text: string;
 	// The nominal length of the formatted string value, not the length of the
@@ -15,12 +18,26 @@ export class StringGroup {
 		this.length = text.length;
 	}
 
-	verifyGroup(text: string): void {
-	};
+	verifyGroup(text: string): void {};
 }
 
 
-export class MarkdownLinkGroup extends StringGroup {
+/**
+ * This is a general MatchGroup for strings without any special formatting.
+ */
+export class StringGroup extends MatchGroup {}
+
+
+/**
+ * This is a general MatchGroup for strings with special formatting used to
+ * differentiate from the general StringGroups.
+ */
+export class CaptureGroup extends MatchGroup {};
+
+
+export class MarkdownLinkGroup extends CaptureGroup {
+	static regexp: RegExp = /\[.*\]\(.*\)/;
+
 	constructor(text: string) {
 		super(text);
 
@@ -33,13 +50,15 @@ export class MarkdownLinkGroup extends StringGroup {
 	}
 
 	verifyGroup(text: string): void {
-		if (text.search(/\[.*\]\(.*\)/) === -1) {
-			throw new StringGroupError(`${text} is not a markdown link`);
+		if (text.search(MarkdownLinkGroup.regexp) === -1) {
+			throw new MatchGroupError(`${text} is not a markdown link`);
 		}
 	}
 }
 
-export class WikilinkGroup extends StringGroup {
+export class WikilinkGroup extends CaptureGroup {
+	static regexp: RegExp = /\[\[.*\]\]/;
+
 	constructor(text: string) {
 		super(text);
 
@@ -55,8 +74,8 @@ export class WikilinkGroup extends StringGroup {
 	}
 
 	verifyGroup(text: string): void {
-		if (text.search(/\[\[.*\]\]/) === -1) {
-			throw new StringGroupError(`${text} is not a wikilink`);
+		if (text.search(WikilinkGroup.regexp) === -1) {
+			throw new MatchGroupError(`${text} is not a wikilink`);
 		}
 	}
 }
