@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownView, Plugin, PluginManifest, PluginSettingTab, Setting } from 'obsidian';
-import { MatchGroup, StringGroup, MarkdownLinkGroup, WikilinkGroup } from 'matchgroup';
+import { StringGroup, MarkdownLinkGroup, WikilinkGroup } from './stringgroup';
 
 
 interface BrakelineFormatterSettings {
@@ -83,7 +83,7 @@ export default class BrakelineFormatter extends Plugin {
 			let indent: string = current + this.getIndent(trimmed);
 
 			// Split words over link formats
-			// let words: MatchGroup[] = [StringGroup(trimmed)];
+			// let words: StringGroup[] = [StringGroup(trimmed)];
 			// words = this.splitGroups(words, this.splitMarkDownLink);
 			// words = this.splitGroups(words, this.splitWikilink);
 			const words: string[] = trimmed.split(' ');
@@ -141,10 +141,10 @@ export default class BrakelineFormatter extends Plugin {
 	}
 
 	splitGroups(
-		groups: MatchGroup[],
-		splitCallback: (text: string) => MatchGroup[]
-	): MatchGroup[] {
-		let result: MatchGroup[] = [];
+		groups: StringGroup[],
+		splitCallback: (text: string) => StringGroup[]
+	): StringGroup[] {
+		let result: StringGroup[] = [];
 
 		for (const group of groups) {
 			if (group instanceof StringGroup) {
@@ -158,7 +158,7 @@ export default class BrakelineFormatter extends Plugin {
 		return result;
 	}
 
-	splitMarkdownLink(text: string): MatchGroup[] {
+	splitMarkdownLink(text: string): StringGroup[] {
 		const re_markdown: RegExp = /\[.*?\]\(.*?\)/g;
 
 		const not_links: string[] = text.split(re_markdown);
@@ -170,7 +170,7 @@ export default class BrakelineFormatter extends Plugin {
 		}
 
 		const i_max: number = Math.max(not_links.length, links.length);
-		let result: MatchGroup[] = [];
+		let result: StringGroup[] = [];
 
 		for (let i = 0; i < i_max; i++) {
 			if (i < not_links.length) {
@@ -185,7 +185,7 @@ export default class BrakelineFormatter extends Plugin {
 		return result;
 	}
 
-	splitWikilink(text: string): MatchGroup[] {
+	splitWikilink(text: string): StringGroup[] {
 		const re_wikilink: RegExp = /\[\[.*?\]\]/g;
 
 		const not_links: string[] = text.split(re_wikilink);
@@ -197,7 +197,7 @@ export default class BrakelineFormatter extends Plugin {
 		}
 
 		const i_max: number = Math.max(not_links.length, links.length);
-		let result: MatchGroup[] = [];
+		let result: StringGroup[] = [];
 
 		for (let i = 0; i < i_max; i++) {
 			if (i < not_links.length) {
