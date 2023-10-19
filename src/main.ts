@@ -7,6 +7,7 @@ import {
 	PluginSettingTab,
 	Setting
 } from 'obsidian';
+
 import { StringGroup, MarkdownLinkGroup, WikilinkGroup } from './stringgroup';
 
 
@@ -80,74 +81,6 @@ export default class BrakelineFormatter extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	formatText(text: string): string {
-		// Format text
-		const paragraphs: string[] = text.split('\n');
-		let result: string[] = [];
-
-		for (let paragraph of paragraphs) {
-			// Preserve existing indent
-			let current: string = this.getLeadingSpaces(paragraph);
-			const trimmed: string = paragraph.trimStart();
-			let indent: string = current + this.getIndent(trimmed);
-
-			// Split words over link formats
-			// let words: StringGroup[] = [StringGroup(trimmed)];
-			// words = this.splitGroups(words, this.splitMarkDownLink);
-			// words = this.splitGroups(words, this.splitWikilink);
-			const words: string[] = trimmed.split(' ');
-
-			// Format paragraph
-			for (const word of words) {
-				const length: number = current.length + word.length + 1;
-				if (length <= this.settings.characterLimit) {
-					if (current.length > 0 && !current.match(/\s$/)) {
-						current += ' ';
-					}
-
-					current += word;
-				}
-				else {
-					result.push(current);
-					current = indent + word;
-				}
-			}
-
-			result.push(current);
-		}
-
-		const formatted: string = result.join('\n');
-
-		return formatted;
-	}
-
-	getIndent(text: string): string {
-		let indent: number = 0;
-
-		// Add indent for notes
-		if (text.startsWith('- ')) {
-			indent += 2;
-		}
-
-		// Add indent for numbered lists
-		let numbered_list = text.match(/^(\d+)\.\s/)
-
-		if (numbered_list) {
-			indent += numbered_list[0].length;
-		}
-
-		return ' '.repeat(indent);
-	}
-
-	getLeadingSpaces(text: string): string {
-		const match = text.match(/^\s*/);
-
-		if (match) {
-			return match[0];
-		}
-
-		return '';
-	}
 }
 
 

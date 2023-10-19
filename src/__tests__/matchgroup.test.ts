@@ -3,7 +3,7 @@ import {
 	StringGroup,
 	MarkdownLinkGroup,
 	WikilinkGroup,
-} from '../stringgroup';
+} from '../matchgroup';
 
 
 const display: string = 'a dream is a wish your heart makes';

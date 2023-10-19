@@ -1,10 +1,11 @@
-import { splitMatchGroups, splitAllMatchGroups } from '../split_stringgroups';
+import { splitMatchGroups, splitAllMatchGroups } from '../split_matchgroup';
 import {
 	MatchGroup,
 	StringGroup,
 	MarkdownLinkGroup,
 	WikilinkGroup,
-} from '../stringgroup';
+} from '../matchgroup';
+
 
 const pre_text: string = 'cinderella sings';
 const display: string = 'a dream is a wish your heart makes';

@@ -4,7 +4,7 @@ import {
 	CaptureGroup,
 	MarkdownLinkGroup,
 	WikilinkGroup
-} from './stringgroup';
+} from './matchgroup';
 
 
 const CAPTURE_GROUPS = new Map<number, typeof CaptureGroup>();
@@ -14,7 +14,7 @@ CAPTURE_GROUPS.set(1, WikilinkGroup);
 
 /**
  * Splits a string into an array of MatchGroups using a regular expression
- * associated with a specific MatchGroup while maintaining order.
+ * associated with a specific CaptureGroup while maintaining order.
  */
 export function splitMatchGroups(
 	text: string,
