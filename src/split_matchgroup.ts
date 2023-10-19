@@ -13,10 +13,45 @@ CAPTURE_GROUPS.set(1, InternalLinkGroup);
 
 
 /**
- * Splits a string into an array of MatchGroups using a regular expression
- * associated with a specific CaptureGroup while maintaining order.
+ * Splits a string into an array of StringGroups over spaces.
  */
-export function splitMatchGroups(
+export function splitStringGroups(text: string): MatchGroup[] {
+	const words: string[] = text.split(' ');
+	let groups: StringGroup[] = [];
+
+	for (const word of words) {
+		groups.push(new StringGroup(word));
+	}
+
+	return groups;
+}
+
+
+/**
+ * Splits an array of MatchGroups into an array with equal or more MatchGroups
+ * by splitting the StringGroups into smaller StringGroups.
+ */
+export function splitAllStringGroups(groups: MatchGroup[]): MatchGroup[] {
+	let result: MatchGroup[] = [];
+
+	for (const group of groups) {
+		if (group instanceof StringGroup) {
+			result.push(...splitStringGroups(group.text));
+		}
+		else {
+			result.push(group);
+		}
+	}
+
+	return result;
+}
+
+
+/**
+ * Splits a string into an array of MatchGroups using a regular expression
+ * associated with the specified CaptureGroup while maintaining order.
+ */
+export function splitCaptureGroups(
 	text: string,
 	group_class: typeof CaptureGroup
 ): MatchGroup[] {
@@ -47,7 +82,7 @@ export function splitMatchGroups(
 
 /**
  * Splits an array of MatchGroup into an array of equal or more MatchGroups
- * by splitting on all CaptureGroups while maintaining order.
+ * by splitting on all CaptureGroups and spaces while maintaining order.
  *
  * The CAPTURE_GROUPS indicate all different types of CaptureGroups,
  * decrementing the index so that every CaptureGroup is used as a split unless
@@ -60,14 +95,14 @@ export function splitAllMatchGroups(
 	const group_class: typeof CaptureGroup | undefined = CAPTURE_GROUPS.get(index);
 
 	if (!group_class) {
-		return groups;
+		return splitAllStringGroups(groups);
 	}
 
 	let result: MatchGroup[] = [];
 
 	for (const group of groups) {
 		if (group instanceof StringGroup) {
-			const subgroup: MatchGroup[] = splitMatchGroups(
+			const subgroup: MatchGroup[] = splitCaptureGroups(
 				group.text,
 				group_class
 			);
