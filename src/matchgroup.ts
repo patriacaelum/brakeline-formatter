@@ -35,13 +35,13 @@ export class StringGroup extends MatchGroup {}
 export class CaptureGroup extends MatchGroup {};
 
 
-export class MarkdownLinkGroup extends CaptureGroup {
-	static regexp: RegExp = /\[.*\]\(.*\)/;
+export class ExternalLinkGroup extends CaptureGroup {
+	static regexp: RegExp = /!?\[.*\]\(.*\)/;
 
 	constructor(text: string) {
 		super(text);
 
-		// Find text in format [this is text](http://link)
+		// Find text in between square brackets
 		const match = text.match(/\[(.*?)\]/);
 
 		if (match) {
@@ -50,14 +50,14 @@ export class MarkdownLinkGroup extends CaptureGroup {
 	}
 
 	verifyGroup(text: string): void {
-		if (text.search(MarkdownLinkGroup.regexp) === -1) {
-			throw new MatchGroupError(`${text} is not a markdown link`);
+		if (text.search(ExternalLinkGroup.regexp) === -1) {
+			throw new MatchGroupError(`${text} is not an external link`);
 		}
 	}
 }
 
-export class WikilinkGroup extends CaptureGroup {
-	static regexp: RegExp = /\[\[.*\]\]/;
+export class InternalLinkGroup extends CaptureGroup {
+	static regexp: RegExp = /!?\[\[.*\]\]/;
 
 	constructor(text: string) {
 		super(text);
@@ -74,8 +74,8 @@ export class WikilinkGroup extends CaptureGroup {
 	}
 
 	verifyGroup(text: string): void {
-		if (text.search(WikilinkGroup.regexp) === -1) {
-			throw new MatchGroupError(`${text} is not a wikilink`);
+		if (text.search(InternalLinkGroup.regexp) === -1) {
+			throw new MatchGroupError(`${text} is not an internal link`);
 		}
 	}
 }

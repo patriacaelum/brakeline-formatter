@@ -2,8 +2,8 @@ import { splitMatchGroups, splitAllMatchGroups } from '../split_matchgroup';
 import {
 	MatchGroup,
 	StringGroup,
-	MarkdownLinkGroup,
-	WikilinkGroup,
+	ExternalLinkGroup,
+	InternalLinkGroup,
 } from '../matchgroup';
 
 
@@ -18,23 +18,23 @@ const wikilink: string = `[[${internal_link}|${display}]]`
 
 
 describe('splitMatchGroups', () => {
-	test('split on markdown links', () => {
+	test('split on external links', () => {
 		const text: string = `${pre_text}${markdown_link}${post_text}`;
-		const groups: MatchGroup[] = splitMatchGroups(text, MarkdownLinkGroup);
+		const groups: MatchGroup[] = splitMatchGroups(text, ExternalLinkGroup);
 
 		expect(groups.length).toBe(3);
 		expect(groups[0]).toBeInstanceOf(StringGroup);
-		expect(groups[1]).toBeInstanceOf(MarkdownLinkGroup);
+		expect(groups[1]).toBeInstanceOf(ExternalLinkGroup);
 		expect(groups[2]).toBeInstanceOf(StringGroup);
 	});
 
-	test('split on wikilinks', () => {
+	test('split on internal links', () => {
 		const text: string = `${pre_text}${wikilink}${post_text}`;
-		const groups: MatchGroup[] = splitMatchGroups(text, WikilinkGroup);
+		const groups: MatchGroup[] = splitMatchGroups(text, InternalLinkGroup);
 
 		expect(groups.length).toBe(3);
 		expect(groups[0]).toBeInstanceOf(StringGroup);
-		expect(groups[1]).toBeInstanceOf(WikilinkGroup);
+		expect(groups[1]).toBeInstanceOf(InternalLinkGroup);
 		expect(groups[2]).toBeInstanceOf(StringGroup);
 	});
 });
@@ -48,8 +48,8 @@ describe('splitAllMatchGroups', () => {
 
 		expect(splits.length).toBe(4);
 		expect(splits[0]).toBeInstanceOf(StringGroup);
-		expect(splits[1]).toBeInstanceOf(MarkdownLinkGroup);
-		expect(splits[2]).toBeInstanceOf(WikilinkGroup);
+		expect(splits[1]).toBeInstanceOf(ExternalLinkGroup);
+		expect(splits[2]).toBeInstanceOf(InternalLinkGroup);
 		expect(splits[3]).toBeInstanceOf(StringGroup);
 	});
 });

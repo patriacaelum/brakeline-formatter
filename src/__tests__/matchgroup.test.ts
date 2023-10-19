@@ -1,13 +1,13 @@
 import {
 	MatchGroupError,
 	StringGroup,
-	MarkdownLinkGroup,
-	WikilinkGroup,
+	ExternalLinkGroup,
+	InternalLinkGroup,
 } from '../matchgroup';
 
 
 const display: string = 'a dream is a wish your heart makes';
-const outgoing_link: string = 'https://cinderellasonglyrics.com';
+const external_link: string = 'https://cinderellasonglyrics.com';
 const internal_link: string = 'songs#from cinderella';
 
 
@@ -30,23 +30,23 @@ describe('StringGroup', () => {
 });
 
 
-describe('MarkdownLinkGroup', () => {
+describe('ExternalLinkGroup', () => {
 	test('empty string', () => {
 		const text: string = '';
-		expect(() => new MarkdownLinkGroup(text)).toThrow(MatchGroupError);
+		expect(() => new ExternalLinkGroup(text)).toThrow(MatchGroupError);
 	});
 
 	test('empty text and empty link', () => {
 		const text: string = '[]()';
-		const group: MarkdownLinkGroup = new MarkdownLinkGroup(text);
+		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(2);
 	});
 
 	test('empty text and with link', () => {
-		const text: string = `[](${outgoing_link})`;
-		const group: MarkdownLinkGroup = new MarkdownLinkGroup(text);
+		const text: string = `[](${external_link})`;
+		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(2);
@@ -54,15 +54,15 @@ describe('MarkdownLinkGroup', () => {
 
 	test('with text and empty link', () => {
 		const text: string = `[${display}]()`;
-		const group: MarkdownLinkGroup = new MarkdownLinkGroup(text);
+		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(display.length);
 	});
 
 	test('with text and with link', () => {
-		const text = `[${display}](${outgoing_link})`
-		const group: MarkdownLinkGroup = new MarkdownLinkGroup(text);
+		const text = `[${display}](${external_link})`
+		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(display.length);
@@ -70,15 +70,15 @@ describe('MarkdownLinkGroup', () => {
 });
 
 
-describe('WikilinkGroup', () => {
+describe('InternalLinkGroup', () => {
 	test('empty string', () => {
 		const text: string = '';
-		expect(() => new WikilinkGroup(text)).toThrow(MatchGroupError);
+		expect(() => new InternalLinkGroup(text)).toThrow(MatchGroupError);
 	});
 
 	test('empty text and empty link', () => {
 		const text: string = '[[]]';
-		const group: WikilinkGroup = new WikilinkGroup(text);
+		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(4);
@@ -86,7 +86,7 @@ describe('WikilinkGroup', () => {
 
 	test('empty text and with link', () => {
 		const text: string = `[[${internal_link}]]`;
-		const group: WikilinkGroup = new WikilinkGroup(text);
+		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(internal_link.length)
@@ -94,7 +94,7 @@ describe('WikilinkGroup', () => {
 
 	test('with text and empty link', () => {
 		const text: string = `[[|${display}]]`;
-		const group: WikilinkGroup = new WikilinkGroup(text);
+		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(display.length);
@@ -102,7 +102,7 @@ describe('WikilinkGroup', () => {
 
 	test('with text and with link', () => {
 		const text: string = `[[${internal_link}|${display}]]`
-		const group: WikilinkGroup = new WikilinkGroup(text);
+		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(display.length);

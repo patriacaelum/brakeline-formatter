@@ -2,14 +2,14 @@ import {
 	MatchGroup,
 	StringGroup,
 	CaptureGroup,
-	MarkdownLinkGroup,
-	WikilinkGroup
+	ExternalLinkGroup,
+	InternalLinkGroup,
 } from './matchgroup';
 
 
 const CAPTURE_GROUPS = new Map<number, typeof CaptureGroup>();
-CAPTURE_GROUPS.set(0, MarkdownLinkGroup);
-CAPTURE_GROUPS.set(1, WikilinkGroup);
+CAPTURE_GROUPS.set(0, ExternalLinkGroup);
+CAPTURE_GROUPS.set(1, InternalLinkGroup);
 
 
 /**
