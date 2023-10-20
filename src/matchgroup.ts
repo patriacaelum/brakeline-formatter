@@ -19,13 +19,13 @@ export abstract class MatchGroup {
 	}
 
 	verifyGroup(text: string): void {};
-}
+};
 
 
 /**
  * This is a general MatchGroup for strings without any special formatting.
  */
-export class StringGroup extends MatchGroup {}
+export class StringGroup extends MatchGroup {};
 
 
 /**
@@ -35,14 +35,21 @@ export class StringGroup extends MatchGroup {}
 export class CaptureGroup extends MatchGroup {};
 
 
+/**
+ * A CaptureGroup for Markdown style external links and external images in the
+ * format `![displayed text](https://link.com)`, with the optional `!`.
+ */
 export class ExternalLinkGroup extends CaptureGroup {
-	static regexp: RegExp = /!?\[.*\]\(.*\)/;
+	// Capture external link while ignoring backslashes
+	static regexp: RegExp = /(?<!\\)!?(?<!\\)\[.*?(?<!\\)\](?<!\\)\(.*?(?<!\\)\)/;
+	// Match display text between square brackets
+	static regexp_display: RegExp = /(?<!\\)\[(.*?)(?<!\\)\]/;
 
 	constructor(text: string) {
 		super(text);
 
-		// Find text in between square brackets
-		const match = text.match(/\[(.*?)\]/);
+		// Find text between square brackets
+		const match = text.match(ExternalLinkGroup.regexp_display);
 
 		if (match) {
 			this.length = Math.max(match[1].length, 2);
@@ -54,22 +61,27 @@ export class ExternalLinkGroup extends CaptureGroup {
 			throw new MatchGroupError(`${text} is not an external link`);
 		}
 	}
-}
+};
 
+
+/**
+ * A CaptureGroup for Obsidian flavored Markdown internal links and embedded
+ * files in the format `![[link#header|displayed text]]`, with the optional `!`.
+ */
 export class InternalLinkGroup extends CaptureGroup {
-	static regexp: RegExp = /!?\[\[.*\]\]/;
+	// Capture internal link while ignoring backslashes
+	static regexp: RegExp = /(?<!\\)!?(?<!\\)\[(?<!\\)\[.*?(?<!\\)\](?<!\\)\]/;
+	// Match text between square brackets and (optionally) after separator
+	static regexp_display: RegExp = /\[\[(?:.*?(?<!\\)\|)?(.+)\]\]/;
 
 	constructor(text: string) {
 		super(text);
 
-		// Find text in format [[#link|this is text]]
-		const match = text.match(/\[\[.*?\|(.*?)\]\]/);
+		// Find text between square brackets and (optionally) after separator
+		const match = text.match(InternalLinkGroup.regexp_display);
 
 		if (match) {
 			this.length = match[1].length;
-		}
-		else if (text.search(/\[\[.+\]\]/) !== -1){
-			this.length = text.length - 4;
 		}
 	}
 
@@ -78,4 +90,4 @@ export class InternalLinkGroup extends CaptureGroup {
 			throw new MatchGroupError(`${text} is not an internal link`);
 		}
 	}
-}
+};

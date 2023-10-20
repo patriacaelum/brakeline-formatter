@@ -57,7 +57,7 @@ export default class BrakelineFormatter extends Plugin {
 				const formatted: string = formatString(text, this.settings.characterLimit);
 				editor.setValue(formatted);
 			}
-		})
+		});
 
 		// This adds a settings tab so the user can configure various aspects
 		// of the plugin

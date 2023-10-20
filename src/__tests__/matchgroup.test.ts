@@ -84,6 +84,14 @@ describe('InternalLinkGroup', () => {
 		expect(group.length).toBe(4);
 	});
 
+	test('empty text and empty link with pipe', () => {
+		const text: string = '[[|]]';
+		const group: InternalLinkGroup = new InternalLinkGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(1);
+	});
+
 	test('empty text and with link', () => {
 		const text: string = `[[${internal_link}]]`;
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
