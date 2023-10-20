@@ -11,13 +11,14 @@
       "DOM",
       "ES5",
       "ES6",
-      "ES7"
+      "ES7",
+      "ESNext",
     ],
     "module": "ESNext",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "target": "ES6",
+    "target": "ESNext",
   },
   "include": [
     "**/*.ts"

@@ -3,6 +3,7 @@ import {
 	StringGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
+	InlineMathJaxGroup,
 } from '../matchgroup';
 
 
@@ -114,5 +115,37 @@ describe('InternalLinkGroup', () => {
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(display.length);
+	});
+});
+
+
+describe('InlineMathJaxGroup', () => {
+	test('empty string', () => {
+		const text: string = '';
+		expect(() => new InlineMathJaxGroup(text)).toThrow(MatchGroupError);
+	});
+
+	test('empty expression', () => {
+		const text: string = '$$';
+		const group: InlineMathJaxGroup = new InlineMathJaxGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(0);
+	});
+
+	test('expression with no spaces', () => {
+		const text: string = '$e^{2i\\pi}=1$';
+		const group: InlineMathJaxGroup = new InlineMathJaxGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(text.length - 2);
+	});
+
+	test('expression with spaces', () => {
+		const text: string = '$e^{2 i \\pi} = 1$';
+		const group: InlineMathJaxGroup = new InlineMathJaxGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(11);
 	});
 });

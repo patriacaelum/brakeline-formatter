@@ -48,7 +48,6 @@ export class ExternalLinkGroup extends CaptureGroup {
 	constructor(text: string) {
 		super(text);
 
-		// Find text between square brackets
 		const match = text.match(ExternalLinkGroup.regexp_display);
 
 		if (match) {
@@ -77,7 +76,6 @@ export class InternalLinkGroup extends CaptureGroup {
 	constructor(text: string) {
 		super(text);
 
-		// Find text between square brackets and (optionally) after separator
 		const match = text.match(InternalLinkGroup.regexp_display);
 
 		if (match) {
@@ -88,6 +86,38 @@ export class InternalLinkGroup extends CaptureGroup {
 	verifyGroup(text: string): void {
 		if (text.search(InternalLinkGroup.regexp) === -1) {
 			throw new MatchGroupError(`${text} is not an internal link`);
+		}
+	}
+};
+
+
+/**
+ * A CaptureGroup for inline MathJax expressions in the format
+ * `$e^{2i\pi} = 1$`.
+ * 
+ * The length of expressions are difficult to calculate, so they are given the
+ * conservative length of the expression without spaces. Especially long or
+ * complex expressions should be using MathJax with double dollar signs.
+ */
+export class InlineMathJaxGroup extends CaptureGroup {
+	// Capture inline MathJax expressions while ignoring backslashes
+	static regexp: RegExp = /(?<!\\)\$.*?(?<!\\)\$/;
+	// Match text between dollar signs
+	static regexp_display: RegExp = /\$(.*)\$/;
+
+	constructor(text: string) {
+		super(text);
+
+		const match = text.match(InlineMathJaxGroup.regexp_display);
+
+		if (match) {
+			this.length = match[1].replaceAll(' ', '').length;
+		}
+	}
+
+	verifyGroup(text: string): void {
+		if (text.search(InlineMathJaxGroup.regexp) === -1) {
+			throw new MatchGroupError(`${text} is not a MathJax expression`);
 		}
 	}
 };
