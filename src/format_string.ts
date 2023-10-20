@@ -3,42 +3,57 @@ import { MatchGroup, StringGroup } from './matchgroup';
 import { splitAllMatchGroups } from './split_matchgroup';
 
 
-function formatText(text: string): string {
-	// Format text
-	const paragraphs: string[] = text.split('\n');
+const SPACE: string = ' ';
+const NEWLINE: string = '\n';
+const ONLY_WHITESPACE: RegExp = /^\s*$/;
+const END_WITH_WHITESPACE: RegExp = /\s$/;
+
+
+export function formatString(
+	text: string,
+	character_limit: number = 80,
+): string {
+	const paragraphs: string[] = text.split(NEWLINE);
 	let result: string[] = [];
 
 	for (let paragraph of paragraphs) {
 		// Preserve existing indent
-		let current: string = this.inferLeadingSpaces(paragraph);
+		let current: string = inferLeadingSpaces(paragraph);
 		const trimmed: string = paragraph.trimStart();
-		let indent: string = current + this.inferIndent(trimmed);
+		let indent: string = current + inferIndent(trimmed);
 
-		// Split words over link formats
-		let words: MatchGroup[] = [new StringGroup(trimmed)];
-		words = this.splitAllMatchGroups(words);
-		// const words: string[] = trimmed.split(' ');
+		// Split paragraph into string groups
+		const groups: MatchGroup[] = splitAllMatchGroups(
+			[new StringGroup(trimmed)]
+		);
 
 		// Format paragraph
-		for (const word of words) {
-			const length: number = current.length + word.length + 1;
-			if (length <= this.settings.characterLimit) {
-				if (current.length > 0 && !current.match(/\s$/)) {
-					current += ' ';
+		let length: number = current.length;
+
+		for (const group of groups) {
+			const proposed_length: number = length + 1 + group.length;
+
+			if (proposed_length <= character_limit) {
+				if (current.length > 0 && !current.match(END_WITH_WHITESPACE)) {
+					current += SPACE;
 				}
 
-				current += word;
+				current += group.text;
+				length = proposed_length;
 			}
 			else {
-				result.push(current);
-				current = indent + word;
+				if (!ONLY_WHITESPACE.test(current)) {
+					result.push(current);
+				}
+				current = indent + group.text;
+				length = current.length;
 			}
 		}
 
 		result.push(current);
 	}
 
-	const formatted: string = result.join('\n');
+	const formatted: string = result.join(NEWLINE);
 
 	return formatted;
 }

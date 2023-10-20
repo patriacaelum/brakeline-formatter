@@ -8,7 +8,7 @@ import {
 	Setting
 } from 'obsidian';
 
-import { StringGroup, MarkdownLinkGroup, WikilinkGroup } from './stringgroup';
+import { formatString } from './format_string';
 
 
 interface BrakelineFormatterSettings {
@@ -54,7 +54,7 @@ export default class BrakelineFormatter extends Plugin {
 
 				// Retrieve, format, then replace text in editor
 				const text: string = editor.getValue();
-				const formatted: string = this.formatText(text);
+				const formatted: string = formatString(text);
 				editor.setValue(formatted);
 			}
 		})
