@@ -4,12 +4,14 @@ import {
 	CaptureGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
+	InlineMathJaxGroup,
 } from './matchgroup';
 
 
 const CAPTURE_GROUPS = new Map<number, typeof CaptureGroup>();
 CAPTURE_GROUPS.set(0, ExternalLinkGroup);
 CAPTURE_GROUPS.set(1, InternalLinkGroup);
+CAPTURE_GROUPS.set(2, InlineMathJaxGroup);
 
 
 /**

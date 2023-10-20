@@ -9,6 +9,7 @@ import {
 	StringGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
+	InlineMathJaxGroup,
 } from '../matchgroup';
 
 
@@ -17,6 +18,7 @@ const pre_text: string = 'cinderella sings';
 const display: string = 'a dream is a wish your heart makes';
 const url: string = 'https://cinderellasonglyrics.com';
 const wikilink: string = 'songs#from cinderella';
+const mathjax: string = '$e^{2i\\pi} = 1$';
 const post_text: string = 'in the movie';
 
 const external_link: string = `[${display}](${url})`;
@@ -132,6 +134,16 @@ describe('splitCaptureGroups', () => {
 		expect(groups.length).toBe(3);
 		expect(groups[0]).toBeInstanceOf(StringGroup);
 		expect(groups[1]).toBeInstanceOf(InternalLinkGroup);
+		expect(groups[2]).toBeInstanceOf(StringGroup);
+	});
+
+	test('split on MathJax expressions', () => {
+		const text: string = `${pre_text}${mathjax}${post_text}`;
+		const groups: MatchGroup[] = splitCaptureGroups(text, InlineMathJaxGroup);
+
+		expect(groups.length).toBe(3);
+		expect(groups[0]).toBeInstanceOf(StringGroup);
+		expect(groups[1]).toBeInstanceOf(InlineMathJaxGroup);
 		expect(groups[2]).toBeInstanceOf(StringGroup);
 	});
 });
