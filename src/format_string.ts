@@ -46,7 +46,7 @@ export function formatString(
 					result.push(current);
 				}
 				current = indent + group.text;
-				length = current.length;
+				length = indent.length + group.length;
 			}
 		}
 
