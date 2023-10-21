@@ -40,11 +40,9 @@ export class StringFormatter {
 
 		this.newlines_before_header = newlines_before_header;
 		this.newlines_after_header = newlines_after_header;
-
-		this.format();
 	}
 
-	format() {
+	format(): string {
 		const paragraphs: string[] = this.text.split(NEWLINE);
 		let newlines: number = 0;
 
@@ -53,7 +51,7 @@ export class StringFormatter {
 			let is_header: boolean = paragraph.startsWith('# ');
 
 			newlines = this.inferNewlinesBeforeHeader(newlines, is_header);
-			this.result[-1] += NEWLINE.repeat(newlines);
+			this.result[this.result.length-1] += NEWLINE.repeat(newlines);
 
 			this.formatParagraph(paragraph);
 
@@ -61,6 +59,8 @@ export class StringFormatter {
 		}
 
 		this.formatted = this.result.join(NEWLINE);
+
+		return this.formatted;
 	}
 
 	formatParagraph(paragraph: string): void {
@@ -110,15 +110,16 @@ export class StringFormatter {
 			// Find the number of existing newlines before header
 			let existing_newlines: number = 0;
 
-			for (let j = n_lines - 1; j >= 0; j--) {
-				if (!this.result[j].match(ONLY_WHITESPACE)) {
-					existing_newlines = n_lines - 1 - j;
+			for (let j = n_lines; j >= n_lines - this.newlines_before_header; j--) {
+				if (!this.result[j-1].match(ONLY_WHITESPACE)) {
+					existing_newlines = n_lines - j;
 
 					break;
 				}
 			}
-			
-			newlines = Math.max(newlines - existing_newlines, 0);
+	
+			newlines = Math.max(newlines, this.newlines_before_header)
+				- existing_newlines;
 		}
 
 		return newlines;
