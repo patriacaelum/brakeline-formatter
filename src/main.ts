@@ -8,21 +8,27 @@ import {
 	Setting
 } from 'obsidian';
 
-import { formatString } from './format_string';
+import { StringFormatter } from './string_formatter';
 
 
 interface BrakelineFormatterSettings {
 	characterLimit: number;
-	ignoreWikiLinks: boolean;
-	ignoreMarkdownLinks: boolean;
+	ignoreExternalLinks: boolean;
+	ignoreInternalLinks: boolean;
+	ignoreInlineMathJaxExpressions: boolean;
+	newlinesBeforeHeader: number;
+	newlinesAfterHeader: number;
 	// formatOnEdit: bool
 }
 
 
 const DEFAULT_SETTINGS: BrakelineFormatterSettings = {
 	characterLimit: 80,
-	ignoreWikiLinks: true,
-	ignoreMarkdownLinks: true,
+	ignoreExternalLinks: true,
+	ignoreInternalLinks: true,
+	ignoreInlineMathJaxExpressions: true,
+	newlinesBeforeHeader: 1,
+	newlinesAfterHeader: 1,
 	// formatOnEdit: false,
 }
 
@@ -54,7 +60,10 @@ export default class BrakelineFormatter extends Plugin {
 
 				// Retrieve, format, then replace text in editor
 				const text: string = editor.getValue();
-				const formatted: string = formatString(text, this.settings.characterLimit);
+				const formatted: string = formatString(
+					text,
+					this.settings.characterLimit,
+				);
 				editor.setValue(formatted);
 			}
 		});
@@ -98,8 +107,8 @@ class BrakelineFormatterSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Character Limit")
-			.setDesc("The maximum number of characters per line")
+			.setName('Character Limit')
+			.setDesc('The maximum number of characters per line')
 			.addSlider(val => val
 				.setLimits(60, 150, 1)
 				.setValue(this.plugin.settings.characterLimit)
@@ -111,23 +120,60 @@ class BrakelineFormatterSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Ignore wikilinks")
-			.setDesc("If enabled, wikilink style links will not count toward the character limit")
+			.setName('Ignore external links')
+			.setDesc('If enabled, only the displayed text in external links links will count toward the character limit')
 			.addToggle(val => val
-				.setValue(this.plugin.settings.ignoreWikiLinks)
+				.setValue(this.plugin.settings.ignoreExternalLinks)
 				.onChange(async (value: boolean) => {
-					this.plugin.settings.ignoreWikiLinks = value;
+					this.plugin.settings.ignoreExternalLinks = value;
 					await this.plugin.saveSettings();
 				})
 			);
 
 		new Setting(containerEl)
-			.setName("Ignore markdown links")
-			.setDesc("If enabled, markdown style links will not count toward the character limit")
+			.setName('Ignore internal links')
+			.setDesc('If enabled, only the displayed text in internal links will count toward the character limit')
 			.addToggle(val => val
-				.setValue(this.plugin.settings.ignoreMarkdownLinks)
+				.setValue(this.plugin.settings.ignoreInternalLinks)
 				.onChange(async (value: boolean) => {
-					this.plugin.settings.ignoreMarkdownLinks = value;
+					this.plugin.settings.ignoreInternalLinks = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Ignore inline MathJax expressions')
+			.setDesc('If enabled, only the displayed text in inline MathJax expressions will count count toward the character limit')
+			.addToggle(val => val
+				.setValue(this.plugin.settings.ignoreInlineMathJaxExpressions)
+				.onChange(async (value: boolean) => {
+					this.plugin.settings.ignoreInlineMathJaxExpressions = value;
+					await this.plugin.saveSettings();
+				})
+			);
+		
+		new Setting(containerEl)
+			.setName('Newlines before header')
+			.setDesc('The minimum number of newlines before a header')
+			.addSlider(val => val
+				.setLimits(0, 5, 1)
+				.setValue(this.plugin.settings.newlinesBeforeHeader)
+				.setDynamicTooltip()
+				.onChange(async (value: number) => {
+					this.plugin.settings.newlinesBeforeHeader = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Newlines after header')
+			.setDesc('The minimum number of newlines after a header')
+			.addSlider(val => val
+				.setLimits(0, 5, 1)
+				.setValue(this.plugin.settings.newlinesAfterHeader)
+				.setDynamicTooltip()
+				.onChange(async (value: number) => {
+					this.plugin.settings.newlinesAfterHeader = value;
 					await this.plugin.saveSettings();
 				})
 			);

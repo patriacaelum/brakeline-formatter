@@ -10,7 +10,7 @@ export abstract class MatchGroup {
 	// The nominal length of the formatted string value, not the length of the
 	// raw string value
 	length: number;
-
+	
 	constructor(text: string) {
 		this.verifyGroup(text);
 
