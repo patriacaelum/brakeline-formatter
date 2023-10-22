@@ -60,10 +60,16 @@ export default class BrakelineFormatter extends Plugin {
 
 				// Retrieve, format, then replace text in editor
 				const text: string = editor.getValue();
-				const formatted: string = formatString(
+				const formatter: StringFormatter = new StringFormatter(
 					text,
 					this.settings.characterLimit,
+					this.settings.ignoreExternalLinks,
+					this.settings.ignoreInternalLinks,
+					this.settings.ignoreInlineMathJaxExpressions,
+					this.settings.newlinesBeforeHeader,
+					this.settings.newlinesAfterHeader,
 				);
+				const formatted: string = formatter.format();
 				editor.setValue(formatted);
 			}
 		});

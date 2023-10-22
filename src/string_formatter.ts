@@ -22,6 +22,11 @@ export class StringFormatter {
 	newlines_before_header: number;
 	newlines_after_header: number;
 
+	/**
+	 * The StringFormatter takes a string and formats it according to the
+	 * following guidelines:
+	 * 
+	 */
 	constructor(
 		text: string,
 		character_limit: number = 80,
@@ -42,6 +47,15 @@ export class StringFormatter {
 		this.newlines_after_header = newlines_after_header;
 	}
 
+	/**
+	 * The main method for this class.
+	 * 
+	 * This method takes the stored text and splits up the string into an array
+	 * of MatchGroups and joined so that each line does not exceed
+	 * `this.character_limit`. Each line is then stored in `this.result`. Once
+	 * the entire text has been formatted, `this.result` is joined together with
+	 * newlines, stored in `this.formatted`, and returned.
+	 */
 	format(): string {
 		const paragraphs: string[] = this.text.split(NEWLINE);
 		let newlines: number = 0;
@@ -50,12 +64,12 @@ export class StringFormatter {
 			const paragraph: string = paragraphs[i];
 			let is_header: boolean = paragraph.startsWith('# ');
 
-			newlines = this.inferNewlinesBeforeHeader(newlines, is_header);
+			newlines = this.inferNewlinesBeforeLine(newlines, is_header);
 			this.result[this.result.length-1] += NEWLINE.repeat(newlines);
 
 			this.formatParagraph(paragraph);
 
-			newlines = this.inferNewlinesAfterHeader(is_header);
+			newlines = this.inferNewlinesAfterLine(is_header);
 		}
 
 		this.formatted = this.result.join(NEWLINE);
@@ -63,6 +77,17 @@ export class StringFormatter {
 		return this.formatted;
 	}
 
+	/**
+	 * Formats a single paragraph of text.
+	 * 
+	 * This method is used by `this.format()` and not intended to be called
+	 * directly.
+	 * 
+	 * This method takes a block of text that has already been stripped of
+	 * newlines, splits it up into an array of MatchGroups, and joins them back
+	 * together so that each line of text does not exceed
+	 * `this.character_limit`. The formatted text is appended to `this.result`.
+	 */
 	formatParagraph(paragraph: string): void {
 		// Preserve existing indent
 		let current: string = inferLeadingSpaces(paragraph);
@@ -102,17 +127,31 @@ export class StringFormatter {
 		this.result.push(current);
 	}
 
-	// Add newlines before header
-	inferNewlinesBeforeHeader(newlines: number, is_header: boolean): number {
+	/**
+	 * Infers the number of newlines that need to be inserted before this line.
+	 * 
+	 * There is no difference if the line is not a header. If the line is a
+	 * header, then this method looks at the end of `this.result` and infers the
+	 * number of additional newlines that need to added to satisfy
+	 * `this.newlines_before_header`.
+	 * 
+	 * @param newlines: the number of newlines that are required after the
+	 *     previous line.
+	 */
+	inferNewlinesBeforeLine(newlines: number, is_header: boolean): number {
 		const n_lines: number = this.result.length;
 
-		if (is_header && n_lines >= this.newlines_before_header && n_lines > 0) {
+		if (is_header && n_lines > 0) {
 			// Find the number of existing newlines before header
 			let existing_newlines: number = 0;
+			const lookback_min: number = Math.max(
+				n_lines - this.newlines_before_header,
+				0
+			);
 
-			for (let j = n_lines; j >= n_lines - this.newlines_before_header; j--) {
-				if (!this.result[j-1].match(ONLY_WHITESPACE)) {
-					existing_newlines = n_lines - j;
+			for (let i = n_lines; i >= lookback_min; i--) {
+				if (!this.result[i-1].match(ONLY_WHITESPACE)) {
+					existing_newlines = n_lines - i;
 
 					break;
 				}
@@ -125,7 +164,10 @@ export class StringFormatter {
 		return newlines;
 	}
 
-	inferNewlinesAfterHeader(is_header: boolean): number {
+	/**
+	 * Infers the number of newlines that need to be inserted after this line.
+	 */
+	inferNewlinesAfterLine(is_header: boolean): number {
 		if (is_header) {
 			return this.newlines_after_header;
 		}
