@@ -3,6 +3,7 @@ import { EMPTY } from '../global_strings';
 import {
 	MatchGroupError,
 	StringGroup,
+	InlineCodeGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
 	InlineMathJaxGroup,
@@ -54,6 +55,29 @@ describe('StringGroup', () => {
 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(URL.length);
+	});
+});
+
+
+describe('InlineCodeGroup', () => {
+	test('empty string', () => {
+		expect(() => new InlineCodeGroup(EMPTY)).toThrow(MatchGroupError);
+	});
+
+	test('empty text', () => {
+		const text: string = '``';
+		const group: InlineCodeGroup = new InlineCodeGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(2);
+	});
+
+	test('with text', () => {
+		const text: string = `\`${DISPLAY}\``;
+		const group: InlineCodeGroup = new InlineCodeGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(DISPLAY.length);
 	});
 });
 

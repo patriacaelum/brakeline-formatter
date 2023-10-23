@@ -9,6 +9,7 @@ import {
 import {
 	MatchGroup,
 	StringGroup,
+	InlineCodeGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
 	InlineMathJaxGroup,
@@ -18,6 +19,7 @@ import {
 const PRETEXT: string = 'cinderella sings';
 const POSTTEXT: string = 'in the movie';
 
+const INLINE_CODE: string = `\`${DISPLAY}\``;
 const EXTERNAL_LINK: string = `[${DISPLAY}](${URL})`;
 const INTERNAL_LINK: string = `[[${ANCHOR}|${DISPLAY}]]`
 
@@ -114,6 +116,16 @@ describe('splitCaptureGroups', () => {
 		expect(groups[0].text).toBe(DISPLAY);
 	});
 
+	test('split on inline code', () => {
+		const text: string = `${PRETEXT}${INLINE_CODE}${POSTTEXT}`;
+		const groups: MatchGroup[] = splitCaptureGroups(text, InlineCodeGroup);
+
+		expect(groups.length).toBe(3);
+		expect(groups[0]).toBeInstanceOf(StringGroup);
+		expect(groups[1]).toBeInstanceOf(InlineCodeGroup);
+		expect(groups[2]).toBeInstanceOf(StringGroup);
+	});
+
 	test('split on external links', () => {
 		const text: string = `${PRETEXT}${EXTERNAL_LINK}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, ExternalLinkGroup);
@@ -155,17 +167,20 @@ describe('splitAllMatchGroups', () => {
 
 	test('split on all match groups', () => {
 		const text: string =
-			`${PRETEXT}${EXTERNAL_LINK}${INTERNAL_LINK}${POSTTEXT}`;
+			`${PRETEXT}${INLINE_CODE}${EXTERNAL_LINK}${INTERNAL_LINK}`
+			+ `${MATHJAX}${POSTTEXT}`;
 		const groups: MatchGroup[] = [new StringGroup(text)];
 		const splits: MatchGroup[] = splitAllMatchGroups(groups);
 
-		expect(splits.length).toBe(7);
+		expect(splits.length).toBe(9);
 		expect(splits[0]).toBeInstanceOf(StringGroup);
 		expect(splits[1]).toBeInstanceOf(StringGroup);
-		expect(splits[2]).toBeInstanceOf(ExternalLinkGroup);
-		expect(splits[3]).toBeInstanceOf(InternalLinkGroup);
-		expect(splits[4]).toBeInstanceOf(StringGroup);
-		expect(splits[5]).toBeInstanceOf(StringGroup);
+		expect(splits[2]).toBeInstanceOf(InlineCodeGroup);
+		expect(splits[3]).toBeInstanceOf(ExternalLinkGroup);
+		expect(splits[4]).toBeInstanceOf(InternalLinkGroup);
+		expect(splits[5]).toBeInstanceOf(InlineMathJaxGroup);
 		expect(splits[6]).toBeInstanceOf(StringGroup);
+		expect(splits[7]).toBeInstanceOf(StringGroup);
+		expect(splits[8]).toBeInstanceOf(StringGroup);
 	});
 });

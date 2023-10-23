@@ -3,6 +3,7 @@ import {
 	MatchGroup,
 	StringGroup,
 	CaptureGroup,
+	InlineCodeGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
 	InlineMathJaxGroup,
@@ -10,9 +11,10 @@ import {
 
 
 const CAPTURE_GROUPS = new Map<number, typeof CaptureGroup>();
-CAPTURE_GROUPS.set(0, ExternalLinkGroup);
-CAPTURE_GROUPS.set(1, InternalLinkGroup);
-CAPTURE_GROUPS.set(2, InlineMathJaxGroup);
+CAPTURE_GROUPS.set(0, InlineCodeGroup);
+CAPTURE_GROUPS.set(1, ExternalLinkGroup);
+CAPTURE_GROUPS.set(2, InternalLinkGroup);
+CAPTURE_GROUPS.set(3, InlineMathJaxGroup);
 
 
 /**

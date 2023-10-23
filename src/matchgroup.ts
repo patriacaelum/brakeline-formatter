@@ -55,6 +55,32 @@ export class CaptureGroup extends MatchGroup {
 
 
 /**
+ * A CaptureGroup for inline code as text between backticks.
+ */
+export class InlineCodeGroup extends CaptureGroup {
+	// Capture inline code
+	static override readonly regexp: RegExp = /`.*?`/;
+	static override readonly regexp_display: RegExp = /`(.*)`/;
+
+	constructor(text: string) {
+		super(text);
+
+		const match = text.match(InlineCodeGroup.regexp_display);
+
+		if (match) {
+			this.length = Math.max(match[1].length, 2);
+		}
+	}
+
+	override verifyGroup(text: string): void {
+	    if (text.search(InlineCodeGroup.regexp) === -1) {
+			throw new MatchGroupError(`${text} is not inline code`);
+		}
+	}
+}
+
+
+/**
  * A CaptureGroup for Markdown style external links and external images in the
  * format `![displayed text](https://link.com)`, with the optional `!`.
  */
