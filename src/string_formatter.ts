@@ -64,22 +64,14 @@ export class StringFormatter {
 
 		for (let i = 0; i < paragraphs.length; i++) {
 			const paragraph: string = paragraphs[i];
+			let ignore: boolean = false;
 
-			// Codeblocks ignore character limit
-			if (paragraph.startsWith(CODEBLOCK_PREFIX)) {
-				is_codeblock = !is_codeblock;
+			[is_codeblock, ignore] = this.formatIfCodeblock(
+				paragraph,
+				is_codeblock,
+			);
 
-				// Special case for closing codeblock
-				if (!is_codeblock) {
-					this.result.push(paragraph);
-
-					continue
-				}
-			}
-
-			if (is_codeblock) {
-				this.result.push(paragraph);
-
+			if (ignore) {
 				continue;
 			}
 
@@ -93,10 +85,11 @@ export class StringFormatter {
 			if (is_header) {
 				// Headers ignore character limit
 				this.result.push(paragraph);
+
+				continue;
 			}
-			else {
-				this.formatParagraph(paragraph);
-			}
+
+			this.formatParagraph(paragraph);
 
 			newlines = this.inferNewlinesAfterLine(is_header);
 		}
@@ -104,6 +97,41 @@ export class StringFormatter {
 		this.formatted = this.result.join(NEWLINE);
 
 		return this.formatted;
+	}
+
+	/**
+	 * Formats the paragraph depending on if it's a codeblock.
+	 *
+	 * Codeblocks, including the opening and closing line, ignore the character
+	 * limit.
+	 *
+	 * @returns the first value determines if the paragraph is entering or
+	 *     exiting a codeblock, the second value determines if the paragraph
+	 *     was ignored and no further formatting is required.
+	 */
+	formatIfCodeblock(
+		paragraph: string,
+		is_codeblock: boolean,
+	): [boolean, boolean] {
+		if (paragraph.startsWith(CODEBLOCK_PREFIX)) {
+			is_codeblock = !is_codeblock;
+
+			// Special case for closing codeblock
+			if (!is_codeblock) {
+				this.result.push(paragraph);
+
+				return [is_codeblock, true];
+			}
+		}
+
+		if (is_codeblock) {
+			this.result.push(paragraph);
+
+			return [is_codeblock, true];
+		}
+
+
+		return [is_codeblock, false];
 	}
 
 	/**
