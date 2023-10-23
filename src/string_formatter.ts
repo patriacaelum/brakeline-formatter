@@ -1,10 +1,11 @@
-import { EMPTY, SPACE, NEWLINE } from './global_strings';
+import { EMPTY, SPACE, NEWLINE, CODEBLOCK_PREFIX } from './global_strings';
 import { inferIndent, inferLeadingSpaces } from './infer_whitespace';
 import { MatchGroup, StringGroup } from './matchgroup';
 import { splitAllMatchGroups } from './split_matchgroup';
 
 
 const HEADER_PREFIX: string = '# ';
+
 const ONLY_WHITESPACE: RegExp = /^\s*$/;
 const END_WITH_WHITESPACE: RegExp = /\s$/;
 
@@ -58,12 +59,34 @@ export class StringFormatter {
 	 */
 	format(): string {
 		const paragraphs: string[] = this.text.split(NEWLINE);
+		let is_codeblock: boolean = false;
 		let newlines: number = 0;
 
 		for (let i = 0; i < paragraphs.length; i++) {
 			const paragraph: string = paragraphs[i];
+
+			// Codeblocks ignore character limit
+			if (paragraph.startsWith(CODEBLOCK_PREFIX)) {
+				is_codeblock = !is_codeblock;
+
+				// Special case for closing codeblock
+				if (!is_codeblock) {
+					this.result.push(paragraph);
+
+					continue
+				}
+			}
+
+			if (is_codeblock) {
+				this.result.push(paragraph);
+
+				continue;
+			}
+
 			let is_header: boolean = paragraph.startsWith(HEADER_PREFIX);
 
+			// Add newlines that need to be added to the begining of this
+			// paragraph
 			newlines = this.inferNewlinesBeforeLine(newlines, is_header);
 			this.result[this.result.length-1] += NEWLINE.repeat(newlines);
 

@@ -1,4 +1,10 @@
-import { EMPTY, SPACE, NEWLINE, CALLOUT_PREFIX } from '../global_strings';
+import {
+	EMPTY,
+	SPACE,
+	NEWLINE,
+	CALLOUT_PREFIX,
+	CODEBLOCK_PREFIX,
+} from '../global_strings';
 import { DISPLAY, URL } from './global_strings';
 import { StringFormatter } from '../string_formatter';
 
@@ -89,8 +95,19 @@ describe('StringFormatter.format multi-line strings', () => {
         expect(formatted).toBe(text);
     });
 
+	test('codeblocks are ignored', () => {
+		const code: string = Array(3).fill(URL3).join(NEWLINE);
+		const text: string = [CODEBLOCK_PREFIX, code, CODEBLOCK_PREFIX]
+			.join(NEWLINE);
+		let formatter: StringFormatter = new StringFormatter(text);
+		let formatted: string = formatter.format();
+
+		console.log(formatted);
+		expect(formatted).toBe(text);
+	});
+
     test('header as second line', () => {
-        const text: string = [DISPLAY, HEADER].join('\n');
+        const text: string = [DISPLAY, HEADER].join(NEWLINE);
         let formatter: StringFormatter = new StringFormatter(text);
 
         expect(formatter.format()).toBe(`${DISPLAY}\n\n${HEADER}`);
