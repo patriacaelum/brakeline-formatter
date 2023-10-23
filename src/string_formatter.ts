@@ -67,7 +67,13 @@ export class StringFormatter {
 			newlines = this.inferNewlinesBeforeLine(newlines, is_header);
 			this.result[this.result.length-1] += NEWLINE.repeat(newlines);
 
-			this.formatParagraph(paragraph);
+			if (is_header) {
+				// Headers ignore character limit
+				this.result.push(paragraph);
+			}
+			else {
+				this.formatParagraph(paragraph);
+			}
 
 			newlines = this.inferNewlinesAfterLine(is_header);
 		}

@@ -1,4 +1,4 @@
-import { EMPTY, SPACE } from '../global_strings';
+import { EMPTY, SPACE, CALLOUT_PREFIX } from '../global_strings';
 import { inferIndent, inferLeadingSpaces } from '../infer_whitespace';
 
 
@@ -11,8 +11,12 @@ describe('inferIndent', () => {
 		expect(inferIndent(EMPTY)).toBe(EMPTY);
 	});
 
-	test('non-list format', () => {
+	test('no format', () => {
 		expect(inferIndent(TEXT)).toBe(EMPTY);
+	});
+
+	test('callout', () => {
+		expect(inferIndent(`${CALLOUT_PREFIX}${TEXT}`)).toBe(CALLOUT_PREFIX);
 	});
 
 	test('list using "- "', () => {

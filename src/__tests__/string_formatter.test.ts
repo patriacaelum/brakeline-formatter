@@ -1,4 +1,4 @@
-import { EMPTY, SPACE, NEWLINE } from '../global_strings';
+import { EMPTY, SPACE, NEWLINE, CALLOUT_PREFIX } from '../global_strings';
 import { DISPLAY, URL } from './global_strings';
 import { StringFormatter } from '../string_formatter';
 
@@ -129,7 +129,7 @@ describe('StringFormatter.formatParagraph', () => {
 
         expect(formatter.result.length).toBe(1);
         expect(formatter.result[0]).toBe(URL3);
-    })
+    });
 
     test('spaces and over character limit', () => {
         const text: string = Array(3).fill(DISPLAY80).join(SPACE);
@@ -140,7 +140,26 @@ describe('StringFormatter.formatParagraph', () => {
         expect(formatter.result[0]).toBe(DISPLAY80);
         expect(formatter.result[1]).toBe(DISPLAY80);
         expect(formatter.result[2]).toBe(DISPLAY80);
-    })
+    });
+
+	test('callout and under character limit', () => {
+		const text: string = `${CALLOUT_PREFIX}${DISPLAY}`;
+		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		formatter.formatParagraph(text);
+
+		expect(formatter.result.length).toBe(1);
+		expect(formatter.result[0]).toBe(text);
+	});
+
+	test('callout and over character limit', () => {
+		const text: string = `${CALLOUT_PREFIX}${DISPLAY80}`
+		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		formatter.formatParagraph(text);
+
+		expect(formatter.result.length).toBe(2);
+		expect(formatter.result[0].startsWith(CALLOUT_PREFIX)).toBeTruthy();
+		expect(formatter.result[1].startsWith(CALLOUT_PREFIX)).toBeTruthy();
+	});
 });
 
 
