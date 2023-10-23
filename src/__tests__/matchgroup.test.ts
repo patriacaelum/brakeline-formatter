@@ -28,6 +28,38 @@ describe('StringGroup', () => {
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(text.length);
 	});
+
+	test('italic text', () => {
+		const text: string = `_${external_link}_`;
+		const group: StringGroup = new StringGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(external_link.length);
+	});
+
+	test('bold text', () => {
+		const text: string = `**${external_link}**`;
+		const group: StringGroup = new StringGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(external_link.length);
+	});
+
+	test('strikethrough text', () => {
+		const text: string = `~~${external_link}~~`;
+		const group: StringGroup = new StringGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(external_link.length);
+	});
+
+	test('highlight text', () => {
+		const text: string = `==${external_link}==`;
+		const group: StringGroup = new StringGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(external_link.length);
+	});
 });
 
 

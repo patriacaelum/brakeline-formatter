@@ -1,9 +1,12 @@
 export class MatchGroupError extends Error {};
 
 
+const EMPTY: string = '';
+
+
 export abstract class MatchGroup {
 	// The regular expression used to find this MatchGroup in a string
-	static regexp: RegExp = /.*?/;
+	static readonly regexp: RegExp;
 
 	// The raw string value
 	text: string;
@@ -25,14 +28,30 @@ export abstract class MatchGroup {
 /**
  * This is a general MatchGroup for strings without any special formatting.
  */
-export class StringGroup extends MatchGroup {};
+export class StringGroup extends MatchGroup {
+	static override readonly regexp: RegExp = /.*?/;
+
+	// Characters for strikethrough, bold, italic, and highlighted text are
+	// ignored unless preceded by a backslash, in which case, count the
+	// preceding backslash
+	static readonly ignored_chars: RegExp = /~~|\*|_|==/g;
+
+	constructor(text: string) {
+		super(text);
+
+		const nominal = text.replaceAll(StringGroup.ignored_chars, EMPTY);
+		this.length = nominal.length;
+	}
+};
 
 
 /**
  * This is a general MatchGroup for strings with special formatting used to
  * differentiate from the general StringGroups.
  */
-export class CaptureGroup extends MatchGroup {};
+export class CaptureGroup extends MatchGroup {
+	static readonly regexp_display: RegExp;
+};
 
 
 /**
@@ -41,9 +60,11 @@ export class CaptureGroup extends MatchGroup {};
  */
 export class ExternalLinkGroup extends CaptureGroup {
 	// Capture external link while ignoring backslashes
-	static regexp: RegExp = /(?<!\\)!?(?<!\\)\[.*?(?<!\\)\](?<!\\)\(.*?(?<!\\)\)/;
+	static override readonly regexp: RegExp =
+		/(?<!\\)!?(?<!\\)\[.*?(?<!\\)\](?<!\\)\(.*?(?<!\\)\)/;
 	// Match display text between square brackets
-	static regexp_display: RegExp = /(?<!\\)\[(.*?)(?<!\\)\]/;
+	static override readonly regexp_display: RegExp =
+		/(?<!\\)\[(.*?)(?<!\\)\]/;
 
 	constructor(text: string) {
 		super(text);
@@ -55,7 +76,7 @@ export class ExternalLinkGroup extends CaptureGroup {
 		}
 	}
 
-	verifyGroup(text: string): void {
+	override verifyGroup(text: string): void {
 		if (text.search(ExternalLinkGroup.regexp) === -1) {
 			throw new MatchGroupError(`${text} is not an external link`);
 		}
@@ -69,9 +90,11 @@ export class ExternalLinkGroup extends CaptureGroup {
  */
 export class InternalLinkGroup extends CaptureGroup {
 	// Capture internal link while ignoring backslashes
-	static regexp: RegExp = /(?<!\\)!?(?<!\\)\[(?<!\\)\[.*?(?<!\\)\](?<!\\)\]/;
+	static override readonly regexp: RegExp =
+		/(?<!\\)!?(?<!\\)\[(?<!\\)\[.*?(?<!\\)\](?<!\\)\]/;
 	// Match text between square brackets and (optionally) after separator
-	static regexp_display: RegExp = /\[\[(?:.*?(?<!\\)\|)?(.+)\]\]/;
+	static override readonly regexp_display: RegExp =
+		/\[\[(?:.*?(?<!\\)\|)?(.+)\]\]/;
 
 	constructor(text: string) {
 		super(text);
@@ -83,7 +106,7 @@ export class InternalLinkGroup extends CaptureGroup {
 		}
 	}
 
-	verifyGroup(text: string): void {
+	override verifyGroup(text: string): void {
 		if (text.search(InternalLinkGroup.regexp) === -1) {
 			throw new MatchGroupError(`${text} is not an internal link`);
 		}
@@ -101,9 +124,9 @@ export class InternalLinkGroup extends CaptureGroup {
  */
 export class InlineMathJaxGroup extends CaptureGroup {
 	// Capture inline MathJax expressions while ignoring backslashes
-	static regexp: RegExp = /(?<!\\)\$.*?(?<!\\)\$/;
+	static override readonly regexp: RegExp = /(?<!\\)\$.*?(?<!\\)\$/;
 	// Match text between dollar signs
-	static regexp_display: RegExp = /\$(.*)\$/;
+	static override readonly regexp_display: RegExp = /\$(.*)\$/;
 
 	constructor(text: string) {
 		super(text);
@@ -115,7 +138,7 @@ export class InlineMathJaxGroup extends CaptureGroup {
 		}
 	}
 
-	verifyGroup(text: string): void {
+	override verifyGroup(text: string): void {
 		if (text.search(InlineMathJaxGroup.regexp) === -1) {
 			throw new MatchGroupError(`${text} is not a MathJax expression`);
 		}

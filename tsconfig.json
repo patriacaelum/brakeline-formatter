@@ -12,13 +12,14 @@
       "ES5",
       "ES6",
       "ES7",
-      "ESNext",
+      "ESNext"
     ],
     "module": "ESNext",
     "moduleResolution": "node",
     "noImplicitAny": true,
+	"noImplicitOverride": true,
     "strictNullChecks": true,
-    "target": "ESNext",
+    "target": "ESNext"
   },
   "include": [
     "**/*.ts"

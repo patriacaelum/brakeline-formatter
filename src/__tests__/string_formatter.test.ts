@@ -147,7 +147,7 @@ describe('StringFormatter.formatParagraph', () => {
 });
 
 
-describe('StringFormatter.inferNewlinesBefore', () => {
+describe('StringFormatter.inferNewlinesBeforeLine', () => {
     test('not header and no prior result', () => {
         const newlines: number = 42;
         let formatter: StringFormatter = new StringFormatter(EMPTY);
@@ -185,7 +185,7 @@ describe('StringFormatter.inferNewlinesBefore', () => {
 });
 
 
-describe('StringFormatter.inferNewlinesAfter', () => {
+describe('StringFormatter.inferNewlinesAfterLine', () => {
 	test('not header', () => {
 		let formatter: StringFormatter = new StringFormatter(EMPTY);
 		expect(formatter.inferNewlinesAfterLine(false)).toBe(0);
