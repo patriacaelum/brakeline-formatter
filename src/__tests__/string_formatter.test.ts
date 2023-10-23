@@ -186,5 +186,13 @@ describe('StringFormatter.inferNewlinesBefore', () => {
 
 
 describe('StringFormatter.inferNewlinesAfter', () => {
+	test('not header', () => {
+		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		expect(formatter.inferNewlinesAfterLine(false)).toBe(0);
+	});
 
+	test('is header', () => {
+		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		expect(formatter.inferNewlinesAfterLine(true)).toBe(1);
+	});
 });
