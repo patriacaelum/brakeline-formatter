@@ -1,3 +1,5 @@
+import { DISPLAY, URL, ANCHOR, MATHJAX } from './global_strings';
+import { EMPTY } from '../global_strings';
 import {
 	MatchGroupError,
 	StringGroup,
@@ -7,66 +9,58 @@ import {
 } from '../matchgroup';
 
 
-const display: string = 'a dream is a wish your heart makes';
-const external_link: string = 'https://cinderellasonglyrics.com';
-const internal_link: string = 'songs#from cinderella';
-
-
 describe('StringGroup', () => {
 	test('empty string', () => {
-		const text: string = '';
-		const group: StringGroup = new StringGroup(text);
+		const group: StringGroup = new StringGroup(EMPTY);
 
-		expect(group.text).toBe(text);
-		expect(group.length).toBe(text.length);
+		expect(group.text).toBe(EMPTY);
+		expect(group.length).toBe(EMPTY.length);
 	});
 
 	test('fields are stored', () => {
-		const text: string = display;
-		const group: StringGroup = new StringGroup(text);
+		const group: StringGroup = new StringGroup(DISPLAY);
 
-		expect(group.text).toBe(text);
-		expect(group.length).toBe(text.length);
+		expect(group.text).toBe(DISPLAY);
+		expect(group.length).toBe(DISPLAY.length);
 	});
 
 	test('italic text', () => {
-		const text: string = `_${external_link}_`;
+		const text: string = `_${URL}_`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(external_link.length);
+		expect(group.length).toBe(URL.length);
 	});
 
 	test('bold text', () => {
-		const text: string = `**${external_link}**`;
+		const text: string = `**${URL}**`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(external_link.length);
+		expect(group.length).toBe(URL.length);
 	});
 
 	test('strikethrough text', () => {
-		const text: string = `~~${external_link}~~`;
+		const text: string = `~~${URL}~~`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(external_link.length);
+		expect(group.length).toBe(URL.length);
 	});
 
 	test('highlight text', () => {
-		const text: string = `==${external_link}==`;
+		const text: string = `==${URL}==`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(external_link.length);
+		expect(group.length).toBe(URL.length);
 	});
 });
 
 
 describe('ExternalLinkGroup', () => {
 	test('empty string', () => {
-		const text: string = '';
-		expect(() => new ExternalLinkGroup(text)).toThrow(MatchGroupError);
+		expect(() => new ExternalLinkGroup(EMPTY)).toThrow(MatchGroupError);
 	});
 
 	test('empty text and empty link', () => {
@@ -78,7 +72,7 @@ describe('ExternalLinkGroup', () => {
 	});
 
 	test('empty text and with link', () => {
-		const text: string = `[](${external_link})`;
+		const text: string = `[](${URL})`;
 		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -86,27 +80,26 @@ describe('ExternalLinkGroup', () => {
 	});
 
 	test('with text and empty link', () => {
-		const text: string = `[${display}]()`;
+		const text: string = `[${DISPLAY}]()`;
 		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(display.length);
+		expect(group.length).toBe(DISPLAY.length);
 	});
 
 	test('with text and with link', () => {
-		const text = `[${display}](${external_link})`
+		const text = `[${DISPLAY}](${URL})`
 		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(display.length);
+		expect(group.length).toBe(DISPLAY.length);
 	});
 });
 
 
 describe('InternalLinkGroup', () => {
 	test('empty string', () => {
-		const text: string = '';
-		expect(() => new InternalLinkGroup(text)).toThrow(MatchGroupError);
+		expect(() => new InternalLinkGroup(EMPTY)).toThrow(MatchGroupError);
 	});
 
 	test('empty text and empty link', () => {
@@ -126,35 +119,34 @@ describe('InternalLinkGroup', () => {
 	});
 
 	test('empty text and with link', () => {
-		const text: string = `[[${internal_link}]]`;
+		const text: string = `[[${ANCHOR}]]`;
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(internal_link.length)
+		expect(group.length).toBe(ANCHOR.length)
 	});
 
 	test('with text and empty link', () => {
-		const text: string = `[[|${display}]]`;
+		const text: string = `[[|${DISPLAY}]]`;
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(display.length);
+		expect(group.length).toBe(DISPLAY.length);
 	});
 
 	test('with text and with link', () => {
-		const text: string = `[[${internal_link}|${display}]]`
+		const text: string = `[[${ANCHOR}|${DISPLAY}]]`
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
-		expect(group.length).toBe(display.length);
+		expect(group.length).toBe(DISPLAY.length);
 	});
 });
 
 
 describe('InlineMathJaxGroup', () => {
 	test('empty string', () => {
-		const text: string = '';
-		expect(() => new InlineMathJaxGroup(text)).toThrow(MatchGroupError);
+		expect(() => new InlineMathJaxGroup(EMPTY)).toThrow(MatchGroupError);
 	});
 
 	test('empty expression', () => {
@@ -166,17 +158,16 @@ describe('InlineMathJaxGroup', () => {
 	});
 
 	test('expression with no spaces', () => {
-		const text: string = '$e^{2i\\pi}=1$';
-		const group: InlineMathJaxGroup = new InlineMathJaxGroup(text);
+		const group: InlineMathJaxGroup = new InlineMathJaxGroup(MATHJAX);
 
-		expect(group.text).toBe(text);
-		expect(group.length).toBe(text.length - 2);
+		expect(group.text).toBe(MATHJAX);
+		expect(group.length).toBe(MATHJAX.length - 2);
 	});
 
 	test('expression with spaces', () => {
 		const text: string = '$e^{2 i \\pi} = 1$';
 		const group: InlineMathJaxGroup = new InlineMathJaxGroup(text);
-
+ 
 		expect(group.text).toBe(text);
 		expect(group.length).toBe(11);
 	});

@@ -1,6 +1,10 @@
+import { EMPTY, SPACE } from './global_strings';
+
+
 const REGEXP_LIST: RegExp = /^([-\*\+] )/;
 const REGEXP_NUMBERED_LIST: RegExp = /^(\d+)\. /;
 const REGEXP_LEADING_SPACES: RegExp = /^\s+/;
+
 
 /**
  * Infers the number of spaces in the indent for following lines of text based
@@ -29,7 +33,7 @@ export function inferIndent(text: string): string {
 		}
 	}
 
-	return ' '.repeat(indent);
+	return SPACE.repeat(indent);
 }
 
 
@@ -43,5 +47,5 @@ export function inferLeadingSpaces(text: string): string {
 		return match[0];
 	}
 
-	return '';
+	return EMPTY;
 }

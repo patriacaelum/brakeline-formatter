@@ -1,15 +1,12 @@
+import { EMPTY, SPACE, NEWLINE } from '../global_strings';
+import { DISPLAY, URL } from './global_strings';
 import { StringFormatter } from '../string_formatter';
 
 
-const EMPTY: string = '';
-const SPACE: string = ' ';
-const NEWLINE: string = '\n';
-const NEWLINE2: string = '\n\n';
-const URL: string = 'https://cinderellalyrics.com';
 const URL3: string = URL.repeat(3);
-const DISPLAY: string = 'a dream is a wish your heart makes';
-const DISPLAY80: string = 'a dream is a wish your heart makes, when you\'re '
-    + 'fast asleep, in dreams you will';
+const DISPLAY80: string = 'A dream is a wish your heart makes, '
+	+ 'When you\'re fast asleep, '
+	+ 'in dreams you will';
 const HEADER: string = '# Cinderella or The Little Glass Slipper';
 
 

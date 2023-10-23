@@ -1,3 +1,5 @@
+import { EMPTY } from '../global_strings';
+import { DISPLAY, URL, ANCHOR, MATHJAX } from './global_strings';
 import {
 	splitStringGroups,
 	splitAllStringGroups,
@@ -13,38 +15,33 @@ import {
 } from '../matchgroup';
 
 
-const empty: string = '';
-const pre_text: string = 'cinderella sings';
-const display: string = 'a dream is a wish your heart makes';
-const url: string = 'https://cinderellasonglyrics.com';
-const wikilink: string = 'songs#from cinderella';
-const mathjax: string = '$e^{2i\\pi} = 1$';
-const post_text: string = 'in the movie';
+const PRETEXT: string = 'cinderella sings';
+const POSTTEXT: string = 'in the movie';
 
-const external_link: string = `[${display}](${url})`;
-const internal_link: string = `[[${wikilink}|${display}]]`
+const EXTERNAL_LINK: string = `[${DISPLAY}](${URL})`;
+const INTERNAL_LINK: string = `[[${ANCHOR}|${DISPLAY}]]`
 
 
 describe('splitStringGroups', () => {
 	test('empty string', () => {
-		const groups: MatchGroup[] = splitStringGroups(empty)
+		const groups: MatchGroup[] = splitStringGroups(EMPTY)
 
 		expect(groups.length).toBe(1);
-		expect(groups[0].text).toBe(empty);
+		expect(groups[0].text).toBe(EMPTY);
 	});
 
 	test('string with no spaces', () => {
-		const groups: MatchGroup[] = splitStringGroups(url);
+		const groups: MatchGroup[] = splitStringGroups(URL);
 
 		expect(groups.length).toBe(1);
-		expect(groups[0].text).toBe(url);
+		expect(groups[0].text).toBe(URL);
 	});
 
 	test('string with spaces', () => {
-		const groups: MatchGroup[] = splitStringGroups(display);
+		const groups: MatchGroup[] = splitStringGroups(DISPLAY);
 
 		expect(groups.length).toBe(8);
-		expect(groups[0].text).toBe('a');
+		expect(groups[0].text).toBe('A');
 		expect(groups[1].text).toBe('dream');
 		expect(groups[2].text).toBe('is');
 		expect(groups[3].text).toBe('a');
@@ -65,19 +62,19 @@ describe('splitAllStringGroups', () => {
 	});
 
 	test('group with empty StringGroup', () => {
-		const groups: MatchGroup[] = [new StringGroup(empty)];
+		const groups: MatchGroup[] = [new StringGroup(EMPTY)];
 		const splits: MatchGroup[] = splitAllStringGroups(groups);
 
 		expect(splits.length).toBe(1);
-		expect(splits[0].text).toBe(empty);
+		expect(splits[0].text).toBe(EMPTY);
 	});
 
 	test('group with StringGroup with spaces', () => {
-		const groups: MatchGroup[] = [new StringGroup(display)];
+		const groups: MatchGroup[] = [new StringGroup(DISPLAY)];
 		const splits: MatchGroup[] = splitAllStringGroups(groups);
 
 		expect(splits.length).toBe(8);
-		expect(splits[0].text).toBe('a');
+		expect(splits[0].text).toBe('A');
 		expect(splits[1].text).toBe('dream');
 		expect(splits[2].text).toBe('is');
 		expect(splits[3].text).toBe('a');
@@ -89,36 +86,36 @@ describe('splitAllStringGroups', () => {
 
 	test('group with non-StringGroups', () => {
 		const groups: MatchGroup[] = [
-			new ExternalLinkGroup(external_link),
-			new InternalLinkGroup(internal_link),
+			new ExternalLinkGroup(EXTERNAL_LINK),
+			new InternalLinkGroup(INTERNAL_LINK),
 		];
 		const splits: MatchGroup[] = splitAllStringGroups(groups);
 
 		expect(splits.length).toBe(2);
 		expect(splits[0]).toBeInstanceOf(ExternalLinkGroup);
-		expect(splits[0].text).toBe(external_link);
+		expect(splits[0].text).toBe(EXTERNAL_LINK);
 		expect(splits[1]).toBeInstanceOf(InternalLinkGroup);
-		expect(splits[1].text).toBe(internal_link);
+		expect(splits[1].text).toBe(INTERNAL_LINK);
 	});
 });
 
 
 describe('splitCaptureGroups', () => {
 	test('empty string', () => {
-		const groups: MatchGroup[] = splitCaptureGroups(empty, ExternalLinkGroup);
+		const groups: MatchGroup[] = splitCaptureGroups(EMPTY, ExternalLinkGroup);
 		
 		expect(groups.length).toBe(0);
 	});
 
 	test('split on string', () => {
-		const groups: MatchGroup[] = splitCaptureGroups(display, ExternalLinkGroup);
+		const groups: MatchGroup[] = splitCaptureGroups(DISPLAY, ExternalLinkGroup);
 
 		expect(groups.length).toBe(1);
-		expect(groups[0].text).toBe(display);
+		expect(groups[0].text).toBe(DISPLAY);
 	});
 
 	test('split on external links', () => {
-		const text: string = `${pre_text}${external_link}${post_text}`;
+		const text: string = `${PRETEXT}${EXTERNAL_LINK}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, ExternalLinkGroup);
 
 		expect(groups.length).toBe(3);
@@ -128,7 +125,7 @@ describe('splitCaptureGroups', () => {
 	});
 
 	test('split on internal links', () => {
-		const text: string = `${pre_text}${internal_link}${post_text}`;
+		const text: string = `${PRETEXT}${INTERNAL_LINK}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, InternalLinkGroup);
 
 		expect(groups.length).toBe(3);
@@ -138,7 +135,7 @@ describe('splitCaptureGroups', () => {
 	});
 
 	test('split on MathJax expressions', () => {
-		const text: string = `${pre_text}${mathjax}${post_text}`;
+		const text: string = `${PRETEXT}${MATHJAX}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, InlineMathJaxGroup);
 
 		expect(groups.length).toBe(3);
@@ -157,7 +154,8 @@ describe('splitAllMatchGroups', () => {
 	});
 
 	test('split on all match groups', () => {
-		const text: string = `${pre_text}${external_link}${internal_link}${post_text}`;
+		const text: string =
+			`${PRETEXT}${EXTERNAL_LINK}${INTERNAL_LINK}${POSTTEXT}`;
 		const groups: MatchGroup[] = [new StringGroup(text)];
 		const splits: MatchGroup[] = splitAllMatchGroups(groups);
 

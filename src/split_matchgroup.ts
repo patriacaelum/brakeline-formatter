@@ -1,3 +1,4 @@
+import { EMPTY, SPACE } from './global_strings';
 import {
 	MatchGroup,
 	StringGroup,
@@ -18,7 +19,7 @@ CAPTURE_GROUPS.set(2, InlineMathJaxGroup);
  * Splits a string into an array of StringGroups over spaces.
  */
 export function splitStringGroups(text: string): MatchGroup[] {
-	const words: string[] = text.split(' ');
+	const words: string[] = text.split(SPACE);
 	let groups: StringGroup[] = [];
 
 	for (const word of words) {
@@ -69,11 +70,11 @@ export function splitCaptureGroups(
 	let result: MatchGroup[] = [];
 
 	for (let i = 0; i < i_max; i++) {
-		if (i < non_matches.length && non_matches[i] !== '') {
+		if (i < non_matches.length && non_matches[i] !== EMPTY) {
 			result.push(new StringGroup(non_matches[i]));
 		}
 
-		if (i < matches.length && matches[i] !== '') {
+		if (i < matches.length && matches[i] !== EMPTY) {
 			result.push(new group_class(matches[i]));
 		}
 	}
@@ -94,7 +95,8 @@ export function splitAllMatchGroups(
 	groups: MatchGroup[],
 	index: number = CAPTURE_GROUPS.size - 1
 ): MatchGroup[] {
-	const group_class: typeof CaptureGroup | undefined = CAPTURE_GROUPS.get(index);
+	const group_class: typeof CaptureGroup | undefined = CAPTURE_GROUPS
+		.get(index);
 
 	if (!group_class) {
 		return splitAllStringGroups(groups);

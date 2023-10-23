@@ -1,10 +1,10 @@
+import { EMPTY, SPACE, NEWLINE } from './global_strings';
 import { inferIndent, inferLeadingSpaces } from './infer_whitespace';
 import { MatchGroup, StringGroup } from './matchgroup';
 import { splitAllMatchGroups } from './split_matchgroup';
 
 
-const SPACE: string = ' ';
-const NEWLINE: string = '\n';
+const HEADER_PREFIX: string = '# ';
 const ONLY_WHITESPACE: RegExp = /^\s*$/;
 const END_WITH_WHITESPACE: RegExp = /\s$/;
 
@@ -13,7 +13,7 @@ export class StringFormatter {
 	text: string;
 	character_limit: number;
 	result: string[] = [];
-	formatted: string = '';
+	formatted: string = EMPTY;
 	
 	ignore_external_links: boolean;
 	ignore_internal_links: boolean;
@@ -62,7 +62,7 @@ export class StringFormatter {
 
 		for (let i = 0; i < paragraphs.length; i++) {
 			const paragraph: string = paragraphs[i];
-			let is_header: boolean = paragraph.startsWith('# ');
+			let is_header: boolean = paragraph.startsWith(HEADER_PREFIX);
 
 			newlines = this.inferNewlinesBeforeLine(newlines, is_header);
 			this.result[this.result.length-1] += NEWLINE.repeat(newlines);

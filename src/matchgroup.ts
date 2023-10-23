@@ -1,7 +1,7 @@
+import { EMPTY } from './global_strings';
+
+
 export class MatchGroupError extends Error {};
-
-
-const EMPTY: string = '';
 
 
 export abstract class MatchGroup {
