@@ -1,4 +1,10 @@
-import { EMPTY, SPACE, NEWLINE, CODEBLOCK_PREFIX } from './global_strings';
+import {
+	EMPTY,
+	SPACE,
+	NEWLINE,
+	DASH3,
+	CODEBLOCK_PREFIX,
+} from './global_strings';
 import { inferIndent, inferLeadingSpaces } from './infer_whitespace';
 import { MatchGroup, StringGroup } from './matchgroup';
 import { splitAllMatchGroups } from './split_matchgroup';
@@ -58,6 +64,7 @@ export class StringFormatter {
 	 */
 	format(): string {
 		const paragraphs: string[] = this.text.split(NEWLINE);
+		let is_frontmatter: boolean = paragraphs[0] === DASH3;
 		let is_codeblock: boolean = false;
 		let newlines: number = 0;
 
@@ -65,6 +72,18 @@ export class StringFormatter {
 			const paragraph: string = paragraphs[i];
 			let ignore: boolean = false;
 
+			// Ignore frontmatter
+			if (i > 0 && paragraph === DASH3) {
+				is_frontmatter = false;
+			}
+
+			if (is_frontmatter) {
+				this.result.push(paragraph);
+
+				continue;
+			}
+
+			// Ignore codeblock
 			[is_codeblock, ignore] = this.formatIfCodeblock(
 				paragraph,
 				is_codeblock,
@@ -74,6 +93,7 @@ export class StringFormatter {
 				continue;
 			}
 
+			// Continue as usual
 			let is_header: boolean = paragraph.search(HEADER_PREFIX) !== -1;
 
 			// Add newlines that need to be added to the begining of this

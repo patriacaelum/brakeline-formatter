@@ -2,6 +2,7 @@ import {
 	EMPTY,
 	SPACE,
 	NEWLINE,
+	DASH3,
 	CALLOUT_PREFIX,
 	CODEBLOCK_PREFIX,
 } from '../global_strings';
@@ -138,7 +139,15 @@ describe('StringFormatter.format multi-line strings', () => {
 		let formatter: StringFormatter = new StringFormatter(text);
 
 		expect(formatter.format()).toBe(`${DISPLAY}\n\n${header}`);
-	})
+	});
+
+	test('frontmatter', () => {
+		const text: string = [DASH3, DISPLAY80 + DISPLAY80, DASH3]
+			.join(NEWLINE);
+		let formatter: StringFormatter = new StringFormatter(text);
+
+		expect(formatter.format()).toBe(text);
+	});
 });
 
 
