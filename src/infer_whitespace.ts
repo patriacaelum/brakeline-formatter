@@ -1,7 +1,13 @@
-import { EMPTY, SPACE, CALLOUT_PREFIX } from './global_strings';
+import {
+	EMPTY,
+	SPACE,
+	CALLOUT_PREFIX,
+	COMMENT_PREFIX,
+} from './global_strings';
 
 
 const REGEXP_CALLOUT: RegExp = /^> /;
+const REGEXP_COMMENT: RegExp = /^%% /;
 const REGEXP_LIST: RegExp = /^([-|\*|\+] (?:\[[ ?|.?]\] )?)/;
 const REGEXP_NUMBERED_LIST: RegExp = /^(\d+)\. /;
 const REGEXP_LEADING_SPACES: RegExp = /^\s+/;
@@ -19,6 +25,11 @@ const REGEXP_LEADING_SPACES: RegExp = /^\s+/;
  * number equal to `n + 2`, where `n` is the number of digits.
  */
 export function inferIndent(text: string): string {
+	// Indent for comments
+	if (text.search(REGEXP_COMMENT) === 0) {
+		return COMMENT_PREFIX;
+	}
+
 	// Indent for callouts
 	if (text.search(REGEXP_CALLOUT) === 0) {
 		return CALLOUT_PREFIX;

@@ -1,4 +1,9 @@
-import { EMPTY, SPACE, CALLOUT_PREFIX } from '../global_strings';
+import {
+	EMPTY,
+	SPACE,
+	CALLOUT_PREFIX,
+	COMMENT_PREFIX,
+} from '../global_strings';
 import { inferIndent, inferLeadingSpaces } from '../infer_whitespace';
 
 
@@ -18,6 +23,10 @@ describe('inferIndent', () => {
 	test('callout', () => {
 		expect(inferIndent(`${CALLOUT_PREFIX}${TEXT}`)).toBe(CALLOUT_PREFIX);
 	});
+
+	test('comment', () => {
+		expect(inferIndent(`${COMMENT_PREFIX}${TEXT}`)).toBe(COMMENT_PREFIX);
+	})
 
 	test('list using "- "', () => {
 		expect(inferIndent(`- ${TEXT}`)).toBe(SPACE2);
