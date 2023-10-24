@@ -51,9 +51,29 @@ describe('StringFormatter.format single-line strings', () => {
 
     test('header as first line', () => {
         let formatter: StringFormatter = new StringFormatter(HEADER);
-
         expect(formatter.format()).toBe(`${HEADER}`);
     });
+
+	test('horizontal bar using "*"', () => {
+		const bar: string = '*'.repeat(3);
+		let formatter: StringFormatter = new StringFormatter(bar);
+
+		expect(formatter.format()).toBe(bar);
+	});
+
+	test('horizontal bar using "-"', () => {
+		const bar: string = '-'.repeat(3);
+		let formatter: StringFormatter = new StringFormatter(bar);
+
+		expect(formatter.format()).toBe(bar);
+	});
+
+	test('horizontal bar using "_"', () => {
+		const bar: string = '_'.repeat(3);
+		let formatter: StringFormatter = new StringFormatter(bar);
+
+		expect(formatter.format()).toBe(bar);
+	});
 });
 
 
