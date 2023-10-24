@@ -4,8 +4,7 @@ import { MatchGroup, StringGroup } from './matchgroup';
 import { splitAllMatchGroups } from './split_matchgroup';
 
 
-const HEADER_PREFIX: string = '# ';
-
+const HEADER_PREFIX: RegExp = /^#+ /;
 const ONLY_WHITESPACE: RegExp = /^\s*$/;
 const END_WITH_WHITESPACE: RegExp = /\s$/;
 
@@ -75,7 +74,7 @@ export class StringFormatter {
 				continue;
 			}
 
-			let is_header: boolean = paragraph.startsWith(HEADER_PREFIX);
+			let is_header: boolean = paragraph.search(HEADER_PREFIX) !== -1;
 
 			// Add newlines that need to be added to the begining of this
 			// paragraph

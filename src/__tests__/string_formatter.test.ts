@@ -111,6 +111,14 @@ describe('StringFormatter.format multi-line strings', () => {
 
         expect(formatter.format()).toBe(`${DISPLAY}\n\n${HEADER}`);
     });
+
+	test('subheader as second ling', () => {
+		const header: string = `##${HEADER}`;
+		const text: string = [DISPLAY, header].join(NEWLINE);
+		let formatter: StringFormatter = new StringFormatter(text);
+
+		expect(formatter.format()).toBe(`${DISPLAY}\n\n${header}`);
+	})
 });
 
 
