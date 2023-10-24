@@ -102,7 +102,6 @@ describe('StringFormatter.format multi-line strings', () => {
 		let formatter: StringFormatter = new StringFormatter(text);
 		let formatted: string = formatter.format();
 
-		console.log(formatted);
 		expect(formatted).toBe(text);
 	});
 

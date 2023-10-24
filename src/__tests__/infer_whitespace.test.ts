@@ -31,6 +31,14 @@ describe('inferIndent', () => {
 		expect(inferIndent(`+ ${TEXT}`)).toBe(SPACE2);
 	});
 
+	test('task list using "- [ ] "', () => {
+		expect(inferIndent(`- [ ] ${TEXT}`)).toBe(SPACE.repeat(6));
+	})
+
+	test('task list using "- [?] "', () => {
+		expect(inferIndent(`- [?] ${TEXT}`)).toBe(SPACE.repeat(6));
+	})
+
 	test('numbered list with one digit', () => {
 		expect(inferIndent(`1. ${TEXT}`)).toBe(SPACE.repeat(3));
 	});

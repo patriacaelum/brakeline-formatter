@@ -2,7 +2,7 @@ import { EMPTY, SPACE, CALLOUT_PREFIX } from './global_strings';
 
 
 const REGEXP_CALLOUT: RegExp = /^> /;
-const REGEXP_LIST: RegExp = /^([-\*\+] )/;
+const REGEXP_LIST: RegExp = /^([-|\*|\+] (?:\[[ ?|.?]\] )?)/;
 const REGEXP_NUMBERED_LIST: RegExp = /^(\d+)\. /;
 const REGEXP_LEADING_SPACES: RegExp = /^\s+/;
 
@@ -19,26 +19,26 @@ const REGEXP_LEADING_SPACES: RegExp = /^\s+/;
  * number equal to `n + 2`, where `n` is the number of digits.
  */
 export function inferIndent(text: string): string {
-	let indent: string = EMPTY;
-
+	// Indent for callouts
 	if (text.search(REGEXP_CALLOUT) === 0) {
-		// Add indent for callouts
-		indent = CALLOUT_PREFIX;
-	}
-	else if (text.search(REGEXP_LIST) === 0) {
-		// Add indent for lists
-		indent = SPACE.repeat(2);
-	}
-	else {
-		// Add indent for numbered lists
-		const match = text.match(REGEXP_NUMBERED_LIST);
-
-		if (match) {
-			indent = SPACE.repeat(match[0].length);
-		}
+		return CALLOUT_PREFIX;
 	}
 
-	return indent;
+	// Indent for lists and task lists
+	const match_list = text.match(REGEXP_LIST);
+
+	if (match_list) {
+		return SPACE.repeat(match_list[0].length);
+	}
+
+	// Indent for numbered lists
+	const match_numbered_list = text.match(REGEXP_NUMBERED_LIST);
+
+	if (match_numbered_list) {
+		return SPACE.repeat(match_numbered_list[0].length);
+	}
+
+	return EMPTY;
 }
 
 
