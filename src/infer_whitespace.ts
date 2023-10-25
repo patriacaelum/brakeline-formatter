@@ -5,11 +5,11 @@ import {
 } from './global_strings';
 
 
-const REGEXP_CALLOUT: RegExp = /^(?:> )+/;
-const REGEXP_COMMENT: RegExp = /^%% /;
-const REGEXP_LIST: RegExp = /^([-|\*|\+] (?:\[[ ?|.?]\] )?)/;
-const REGEXP_NUMBERED_LIST: RegExp = /^(\d+)\. /;
-const REGEXP_LEADING_SPACES: RegExp = /^\s+/;
+const REGEXP_CALLOUT = /^(?:> )+/;
+const REGEXP_COMMENT = /^%% /;
+const REGEXP_LIST = /^([-|*|+] (?:\[[ ?|.?]\] )?)/;
+const REGEXP_NUMBERED_LIST = /^(\d+)\. /;
+const REGEXP_LEADING_SPACES = /^\s+/;
 
 
 /**
