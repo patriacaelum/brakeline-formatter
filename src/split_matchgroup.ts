@@ -22,7 +22,7 @@ CAPTURE_GROUPS.set(3, InlineMathJaxGroup);
  */
 export function splitStringGroups(text: string): MatchGroup[] {
 	const words: string[] = text.split(SPACE);
-	let groups: StringGroup[] = [];
+	const groups: StringGroup[] = [];
 
 	for (const word of words) {
 		groups.push(new StringGroup(word));
@@ -37,7 +37,7 @@ export function splitStringGroups(text: string): MatchGroup[] {
  * by splitting the StringGroups into smaller StringGroups.
  */
 export function splitAllStringGroups(groups: MatchGroup[]): MatchGroup[] {
-	let result: MatchGroup[] = [];
+	const result: MatchGroup[] = [];
 
 	for (const group of groups) {
 		if (group instanceof StringGroup) {
@@ -62,14 +62,14 @@ export function splitCaptureGroups(
 ): MatchGroup[] {
 	const non_matches: string[] = text.split(group_class.regexp);
 	let matches: string[] = [];
-	let match = text.match(group_class.regexp);
+	const match = text.match(group_class.regexp);
 
 	if (match) {
 		matches = match;
 	}
 
 	const i_max: number = Math.max(non_matches.length, matches.length);
-	let result: MatchGroup[] = [];
+	const result: MatchGroup[] = [];
 
 	for (let i = 0; i < i_max; i++) {
 		if (i < non_matches.length && non_matches[i] !== EMPTY) {
@@ -104,7 +104,7 @@ export function splitAllMatchGroups(
 		return splitAllStringGroups(groups);
 	}
 
-	let result: MatchGroup[] = [];
+	const result: MatchGroup[] = [];
 
 	for (const group of groups) {
 		if (group instanceof StringGroup) {
