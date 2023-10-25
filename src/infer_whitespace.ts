@@ -6,7 +6,7 @@ import {
 } from './global_strings';
 
 
-const REGEXP_CALLOUT: RegExp = /^> /;
+const REGEXP_CALLOUT: RegExp = /^(?:> )+/;
 const REGEXP_COMMENT: RegExp = /^%% /;
 const REGEXP_LIST: RegExp = /^([-|\*|\+] (?:\[[ ?|.?]\] )?)/;
 const REGEXP_NUMBERED_LIST: RegExp = /^(\d+)\. /;
@@ -31,8 +31,10 @@ export function inferIndent(text: string): string {
 	}
 
 	// Indent for callouts
-	if (text.search(REGEXP_CALLOUT) === 0) {
-		return CALLOUT_PREFIX;
+	const match_callout = text.match(REGEXP_CALLOUT);
+
+	if (match_callout) {
+		return match_callout[0];
 	}
 
 	// Indent for lists and task lists
