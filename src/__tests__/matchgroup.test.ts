@@ -26,7 +26,7 @@ describe('StringGroup', () => {
 	});
 
 	test('italic text', () => {
-		const text: string = `_${URL}_`;
+		const text = `_${URL}_`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
@@ -34,7 +34,7 @@ describe('StringGroup', () => {
 	});
 
 	test('bold text', () => {
-		const text: string = `**${URL}**`;
+		const text = `**${URL}**`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
@@ -42,7 +42,7 @@ describe('StringGroup', () => {
 	});
 
 	test('strikethrough text', () => {
-		const text: string = `~~${URL}~~`;
+		const text = `~~${URL}~~`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
@@ -50,7 +50,7 @@ describe('StringGroup', () => {
 	});
 
 	test('highlight text', () => {
-		const text: string = `==${URL}==`;
+		const text = `==${URL}==`;
 		const group: StringGroup = new StringGroup(text);
 
 		expect(group.text).toBe(text);
@@ -65,7 +65,7 @@ describe('InlineCodeGroup', () => {
 	});
 
 	test('empty text', () => {
-		const text: string = '``';
+		const text = '``';
 		const group: InlineCodeGroup = new InlineCodeGroup(text);
 
 		expect(group.text).toBe(text);
@@ -73,7 +73,7 @@ describe('InlineCodeGroup', () => {
 	});
 
 	test('with text', () => {
-		const text: string = `\`${DISPLAY}\``;
+		const text = `\`${DISPLAY}\``;
 		const group: InlineCodeGroup = new InlineCodeGroup(text);
 
 		expect(group.text).toBe(text);
@@ -88,7 +88,7 @@ describe('ExternalLinkGroup', () => {
 	});
 
 	test('empty text and empty link', () => {
-		const text: string = '[]()';
+		const text = '[]()';
 		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -96,7 +96,7 @@ describe('ExternalLinkGroup', () => {
 	});
 
 	test('empty text and with link', () => {
-		const text: string = `[](${URL})`;
+		const text = `[](${URL})`;
 		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -104,7 +104,7 @@ describe('ExternalLinkGroup', () => {
 	});
 
 	test('with text and empty link', () => {
-		const text: string = `[${DISPLAY}]()`;
+		const text = `[${DISPLAY}]()`;
 		const group: ExternalLinkGroup = new ExternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -127,7 +127,7 @@ describe('InternalLinkGroup', () => {
 	});
 
 	test('empty text and empty link', () => {
-		const text: string = '[[]]';
+		const text = '[[]]';
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -135,7 +135,7 @@ describe('InternalLinkGroup', () => {
 	});
 
 	test('empty text and empty link with pipe', () => {
-		const text: string = '[[|]]';
+		const text = '[[|]]';
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -143,7 +143,7 @@ describe('InternalLinkGroup', () => {
 	});
 
 	test('empty text and with link', () => {
-		const text: string = `[[${ANCHOR}]]`;
+		const text = `[[${ANCHOR}]]`;
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -151,7 +151,7 @@ describe('InternalLinkGroup', () => {
 	});
 
 	test('with text and empty link', () => {
-		const text: string = `[[|${DISPLAY}]]`;
+		const text = `[[|${DISPLAY}]]`;
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -159,7 +159,7 @@ describe('InternalLinkGroup', () => {
 	});
 
 	test('with text and with link', () => {
-		const text: string = `[[${ANCHOR}|${DISPLAY}]]`
+		const text = `[[${ANCHOR}|${DISPLAY}]]`
 		const group: InternalLinkGroup = new InternalLinkGroup(text);
 
 		expect(group.text).toBe(text);
@@ -174,7 +174,7 @@ describe('InlineMathJaxGroup', () => {
 	});
 
 	test('empty expression', () => {
-		const text: string = '$$';
+		const text = '$$';
 		const group: InlineMathJaxGroup = new InlineMathJaxGroup(text);
 
 		expect(group.text).toBe(text);
@@ -189,7 +189,7 @@ describe('InlineMathJaxGroup', () => {
 	});
 
 	test('expression with spaces', () => {
-		const text: string = '$e^{2 i \\pi} = 1$';
+		const text = '$e^{2 i \\pi} = 1$';
 		const group: InlineMathJaxGroup = new InlineMathJaxGroup(text);
  
 		expect(group.text).toBe(text);

@@ -16,12 +16,12 @@ import {
 } from '../matchgroup';
 
 
-const PRETEXT: string = 'cinderella sings';
-const POSTTEXT: string = 'in the movie';
+const PRETEXT = 'cinderella sings';
+const POSTTEXT = 'in the movie';
 
-const INLINE_CODE: string = `\`${DISPLAY}\``;
-const EXTERNAL_LINK: string = `[${DISPLAY}](${URL})`;
-const INTERNAL_LINK: string = `[[${ANCHOR}|${DISPLAY}]]`
+const INLINE_CODE = `\`${DISPLAY}\``;
+const EXTERNAL_LINK = `[${DISPLAY}](${URL})`;
+const INTERNAL_LINK = `[[${ANCHOR}|${DISPLAY}]]`
 
 
 describe('splitStringGroups', () => {
@@ -117,7 +117,7 @@ describe('splitCaptureGroups', () => {
 	});
 
 	test('split on inline code', () => {
-		const text: string = `${PRETEXT}${INLINE_CODE}${POSTTEXT}`;
+		const text = `${PRETEXT}${INLINE_CODE}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, InlineCodeGroup);
 
 		expect(groups.length).toBe(3);
@@ -127,7 +127,7 @@ describe('splitCaptureGroups', () => {
 	});
 
 	test('split on external links', () => {
-		const text: string = `${PRETEXT}${EXTERNAL_LINK}${POSTTEXT}`;
+		const text = `${PRETEXT}${EXTERNAL_LINK}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, ExternalLinkGroup);
 
 		expect(groups.length).toBe(3);
@@ -137,7 +137,7 @@ describe('splitCaptureGroups', () => {
 	});
 
 	test('split on internal links', () => {
-		const text: string = `${PRETEXT}${INTERNAL_LINK}${POSTTEXT}`;
+		const text = `${PRETEXT}${INTERNAL_LINK}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, InternalLinkGroup);
 
 		expect(groups.length).toBe(3);
@@ -147,7 +147,7 @@ describe('splitCaptureGroups', () => {
 	});
 
 	test('split on MathJax expressions', () => {
-		const text: string = `${PRETEXT}${MATHJAX}${POSTTEXT}`;
+		const text = `${PRETEXT}${MATHJAX}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, InlineMathJaxGroup);
 
 		expect(groups.length).toBe(3);

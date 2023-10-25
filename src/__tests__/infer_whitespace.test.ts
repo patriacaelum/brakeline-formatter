@@ -7,7 +7,7 @@ import {
 import { inferIndent, inferLeadingSpaces } from '../infer_whitespace';
 
 
-const TEXT: string = 'this - here * is + a 42. list';
+const TEXT = 'this - here * is + a 42. list';
 const SPACE2: string = SPACE.repeat(2);
 
 

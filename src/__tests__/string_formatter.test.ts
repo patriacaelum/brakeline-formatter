@@ -14,7 +14,7 @@ const URL3: string = URL.repeat(3);
 const DISPLAY80: string = 'A dream is a wish your heart makes, '
 	+ 'When you\'re fast asleep, '
 	+ 'in dreams you will';
-const HEADING: string = '# Cinderella or The Little Glass Slipper';
+const HEADING = '# Cinderella or The Little Glass Slipper';
 
 
 describe('StringFormatter.format single-line and under limit', () => {
@@ -78,14 +78,14 @@ describe('StringFormatter.format single line over limit', () => {
     });
 
 	test('heading as first line', () => {
-		const text: string = `${HEADING}${DISPLAY80}`;
+		const text = `${HEADING}${DISPLAY80}`;
 		const formatted: string = new StringFormatter(text).format();
 
 		expect(formatted).toBe(text);
 	});
 
 	test('list', () => {
-		const text: string = `- ${DISPLAY80}`;
+		const text = `- ${DISPLAY80}`;
 		const formatted: string[] = new StringFormatter(text).format().split(NEWLINE);
 
 		expect(formatted.length).toBe(2);
@@ -94,7 +94,7 @@ describe('StringFormatter.format single line over limit', () => {
 	});
 
 	test('comment', () => {
-		const text: string = `%% ${DISPLAY80}`;
+		const text = `%% ${DISPLAY80}`;
 		const formatted: string[] = new StringFormatter(text).format().split(NEWLINE);
 
 		expect(formatted.length).toBe(2);
@@ -157,7 +157,7 @@ describe('StringFormatter.format multi-line strings', () => {
     });
 
 	test('subheading as second line', () => {
-		const subheading: string = `##${HEADING}`;
+		const subheading = `##${HEADING}`;
 		const text: string = [DISPLAY, subheading].join(NEWLINE);
 		const formatted: string = new StringFormatter(text).format();
 
@@ -197,7 +197,7 @@ describe('StringFormatter.format multi-line strings', () => {
 	test('frontmatter', () => {
 		const text: string = [DASH3, DISPLAY80 + DISPLAY80, DASH3]
 			.join(NEWLINE);
-		let formatter: StringFormatter = new StringFormatter(text);
+		const formatter: StringFormatter = new StringFormatter(text);
 
 		expect(formatter.format()).toBe(text);
 	});
@@ -206,7 +206,7 @@ describe('StringFormatter.format multi-line strings', () => {
 
 describe('StringFormatter.formatParagraph under limit', () => {
     test('empty string', () => {
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.formatParagraph(EMPTY);
 
         expect(formatter.result.length).toBe(1);
@@ -214,7 +214,7 @@ describe('StringFormatter.formatParagraph under limit', () => {
     });
 
     test('no spaces', () => {
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.formatParagraph(URL);
 
         expect(formatter.result.length).toBe(1);
@@ -222,7 +222,7 @@ describe('StringFormatter.formatParagraph under limit', () => {
     });
 
     test('with spaces', () => {
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.formatParagraph(DISPLAY);
 
         expect(formatter.result.length).toBe(1);
@@ -230,8 +230,8 @@ describe('StringFormatter.formatParagraph under limit', () => {
     });
 
 	test('callout and under character limit', () => {
-		const text: string = `${CALLOUT_PREFIX}${DISPLAY}`;
-		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		const text = `${CALLOUT_PREFIX}${DISPLAY}`;
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
 		formatter.formatParagraph(text);
 
 		expect(formatter.result.length).toBe(1);
@@ -242,7 +242,7 @@ describe('StringFormatter.formatParagraph under limit', () => {
 
 describe('StringFormatter.formatParagraph over limit', () => {
     test('no spaces', () => {
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.formatParagraph(URL3);
 
         expect(formatter.result.length).toBe(1);
@@ -251,7 +251,7 @@ describe('StringFormatter.formatParagraph over limit', () => {
 
     test('with spaces', () => {
         const text: string = Array(3).fill(DISPLAY80).join(SPACE);
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.formatParagraph(text);
 
         expect(formatter.result.length).toBe(3);
@@ -261,8 +261,8 @@ describe('StringFormatter.formatParagraph over limit', () => {
     });
 
 	test('callout', () => {
-		const text: string = `${CALLOUT_PREFIX}${DISPLAY80}`
-		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		const text = `${CALLOUT_PREFIX}${DISPLAY80}`
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
 		formatter.formatParagraph(text);
 
 		expect(formatter.result.length).toBe(2);
@@ -274,16 +274,16 @@ describe('StringFormatter.formatParagraph over limit', () => {
 
 describe('StringFormatter.inferNewlinesBeforeLine', () => {
     test('not header and no prior result', () => {
-        const newlines: number = 42;
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const newlines = 42;
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
 		const before: number = formatter.inferNewlinesBeforeLine(newlines, false);
 
         expect(before).toBe(newlines);
     });
 
     test('not header and prior result', () => {
-        const newlines: number = 42;
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const newlines = 42;
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.result = Array(3).fill(NEWLINE);
 		const before: number = formatter.inferNewlinesBeforeLine(newlines, false);
 
@@ -291,16 +291,16 @@ describe('StringFormatter.inferNewlinesBeforeLine', () => {
     });
 
     test('is header and no prior result', () => {
-        const newlines: number = 42;
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const newlines = 42;
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
 		const before: number = formatter.inferNewlinesBeforeLine(newlines, true);
 
         expect(before).toBe(newlines);
     });
 
     test('is header and prior result', () => {
-        const newlines: number = 42;
-        let formatter: StringFormatter = new StringFormatter(EMPTY);
+        const newlines = 42;
+        const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.newlines_before_header = newlines;
         formatter.result = [DISPLAY, NEWLINE, NEWLINE, NEWLINE];
 		const before: number = formatter.inferNewlinesBeforeLine(newlines, true);
@@ -312,14 +312,14 @@ describe('StringFormatter.inferNewlinesBeforeLine', () => {
 
 describe('StringFormatter.inferNewlinesAfterLine', () => {
 	test('not header', () => {
-		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
 		const after: number = formatter.inferNewlinesAfterLine(false);
 
 		expect(after).toBe(0);
 	});
 
 	test('is header', () => {
-		let formatter: StringFormatter = new StringFormatter(EMPTY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
 		const after: number = formatter.inferNewlinesAfterLine(true);
 
 		expect(after).toBe(1);
