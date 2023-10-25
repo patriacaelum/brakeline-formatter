@@ -10,9 +10,9 @@ import { MatchGroup, StringGroup } from './matchgroup';
 import { splitAllMatchGroups } from './split_matchgroup';
 
 
-const HEADER_PREFIX: RegExp = /^#+ /;
-const ONLY_WHITESPACE: RegExp = /^\s*$/;
-const END_WITH_WHITESPACE: RegExp = /\s$/;
+const HEADER_PREFIX = /^#+ /;
+const ONLY_WHITESPACE = /^\s*$/;
+const END_WITH_WHITESPACE = /\s$/;
 
 
 export class StringFormatter {
@@ -35,12 +35,12 @@ export class StringFormatter {
 	 */
 	constructor(
 		text: string,
-		character_limit: number = 80,
-		ignore_external_links: boolean = true,
-		ignore_internal_links: boolean = true,
-		ignore_mathjax_expressions: boolean = true,
-		newlines_before_header: number = 1,
-		newlines_after_header: number = 1,
+		character_limit = 80,
+		ignore_external_links = true,
+		ignore_internal_links = true,
+		ignore_mathjax_expressions = true,
+		newlines_before_header = 1,
+		newlines_after_header = 1,
 	) {
 		this.text = text;
 		this.character_limit = character_limit;
@@ -65,12 +65,12 @@ export class StringFormatter {
 	format(): string {
 		const paragraphs: string[] = this.text.split(NEWLINE);
 		let is_frontmatter: boolean = paragraphs[0] === DASH3;
-		let is_codeblock: boolean = false;
-		let newlines: number = 0;
+		let is_codeblock = false;
+		let newlines = 0;
 
 		for (let i = 0; i < paragraphs.length; i++) {
 			const paragraph: string = paragraphs[i];
-			let ignore: boolean = false;
+			let ignore = false;
 
 			// Ignore frontmatter
 			if (i > 0 && paragraph === DASH3) {
@@ -94,7 +94,7 @@ export class StringFormatter {
 			}
 
 			// Continue as usual
-			let is_header: boolean = paragraph.search(HEADER_PREFIX) !== -1;
+			const is_header: boolean = paragraph.search(HEADER_PREFIX) !== -1;
 
 			// Add newlines that need to be added to the begining of this
 			// paragraph
@@ -168,7 +168,7 @@ export class StringFormatter {
 		// Preserve existing indent
 		let current: string = inferLeadingSpaces(paragraph);
 		const trimmed: string = paragraph.trimStart();
-		let indent: string = current + inferIndent(trimmed);
+		const indent: string = current + inferIndent(trimmed);
 
 		// Split paragraph into string groups
 		const groups: MatchGroup[] = splitAllMatchGroups(
@@ -219,7 +219,7 @@ export class StringFormatter {
 
 		if (is_header && n_lines > 0) {
 			// Find the number of existing newlines before header
-			let existing_newlines: number = 0;
+			let existing_newlines = 0;
 			const lookback_min: number = Math.max(
 				n_lines - this.newlines_before_header,
 				0
