@@ -1,8 +1,8 @@
-export const EMPTY: string = '';
-export const SPACE: string = ' ';
-export const NEWLINE: string = '\n';
-export const DASH3: string = '---';
+export const EMPTY = '';
+export const SPACE = ' ';
+export const NEWLINE = '\n';
+export const DASH3 = '---';
 
-export const CALLOUT_PREFIX: string = '> ';
-export const CODEBLOCK_PREFIX: string = '```';
-export const COMMENT_PREFIX: string = '%% ';
+export const CALLOUT_PREFIX = '> ';
+export const CODEBLOCK_PREFIX = '```';
+export const COMMENT_PREFIX = '%% ';
