@@ -192,6 +192,7 @@ describe('StringFormatter.format multi-line strings', () => {
 		expect(formatted[0].startsWith('> ')).toBeTruthy();
 		expect(formatted[1].startsWith('> > ')).toBeTruthy();
 		expect(formatted[2].startsWith('> > ')).toBeTruthy();
+	});
 
 	test('frontmatter', () => {
 		const text: string = [DASH3, DISPLAY80 + DISPLAY80, DASH3]

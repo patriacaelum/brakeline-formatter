@@ -1,7 +1,6 @@
 import {
 	EMPTY,
 	SPACE,
-	CALLOUT_PREFIX,
 	COMMENT_PREFIX,
 } from './global_strings';
 
