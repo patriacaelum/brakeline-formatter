@@ -1,0 +1,31 @@
+name: Lint, Test, and Coverage
+
+on: 
+  push:
+    branches:
+      - master
+  
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'latest'
+
+      - name: Install dependencies
+        run: npm install --production=false
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests and coverage
+        run: npm run test

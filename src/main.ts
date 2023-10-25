@@ -42,7 +42,7 @@ export default class BrakelineFormatter extends Plugin {
 		this.settings = DEFAULT_SETTINGS;
 	}
 
-	async onload() {
+	override async onload() {
 		// Runs whenever the user starts using the plugin
 		await this.loadSettings();
 
@@ -85,8 +85,7 @@ export default class BrakelineFormatter extends Plugin {
 		);
 	}
 
-	onunload() {
-	}
+	override onunload() {}
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
