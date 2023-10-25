@@ -2,8 +2,6 @@
 
 ![Build](https://github.com/patriacaelum/brakeline-formatter/actions/workflows/build.yml/badge.svg)
 ![Lint](https://github.com/patriacaelum/brakeline-formatter/actions/workflows/lint_test_coverage.yml/badge.svg)
-![Test](https://github.com/patriacaelum/brakeline-formatter/actions/workflows/lint_test_coverage.yml/badge.svg)
-![Coverage](https://github.com/patriacaelum/brakeline-formatter/actions/workflows/lint_test_coverage.yml/badge.svg)
 
 ## Releasing new releases
 
