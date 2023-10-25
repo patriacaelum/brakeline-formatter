@@ -1,7 +1,7 @@
 import { EMPTY } from './global_strings';
 
 
-export class MatchGroupError extends Error {};
+export class MatchGroupError extends Error {}
 
 
 export abstract class MatchGroup {
@@ -21,8 +21,8 @@ export abstract class MatchGroup {
 		this.length = text.length;
 	}
 
-	verifyGroup(text: string): void {};
-};
+	verifyGroup(text: string): void {}
+}
 
 
 /**
@@ -42,7 +42,7 @@ export class StringGroup extends MatchGroup {
 		const nominal = text.replaceAll(StringGroup.ignored_chars, EMPTY);
 		this.length = nominal.length;
 	}
-};
+}
 
 
 /**
@@ -51,7 +51,7 @@ export class StringGroup extends MatchGroup {
  */
 export class CaptureGroup extends MatchGroup {
 	static readonly regexp_display: RegExp;
-};
+}
 
 
 /**
@@ -73,7 +73,7 @@ export class InlineCodeGroup extends CaptureGroup {
 	}
 
 	override verifyGroup(text: string): void {
-	    if (text.search(InlineCodeGroup.regexp) === -1) {
+		if (text.search(InlineCodeGroup.regexp) === -1) {
 			throw new MatchGroupError(`${text} is not inline code`);
 		}
 	}
@@ -107,7 +107,7 @@ export class ExternalLinkGroup extends CaptureGroup {
 			throw new MatchGroupError(`${text} is not an external link`);
 		}
 	}
-};
+}
 
 
 /**
@@ -137,7 +137,7 @@ export class InternalLinkGroup extends CaptureGroup {
 			throw new MatchGroupError(`${text} is not an internal link`);
 		}
 	}
-};
+}
 
 
 /**
@@ -169,4 +169,4 @@ export class InlineMathJaxGroup extends CaptureGroup {
 			throw new MatchGroupError(`${text} is not a MathJax expression`);
 		}
 	}
-};
+}
