@@ -29,7 +29,7 @@ export abstract class MatchGroup {
  * This is a general MatchGroup for strings without any special formatting.
  */
 export class StringGroup extends MatchGroup {
-	static override readonly regexp: RegExp = /.*?/;
+	static override readonly regexp: RegExp = /.*?/g;
 
 	// Characters for strikethrough, bold, italic, and highlighted text are
 	// ignored unless preceded by a backslash, in which case, count the
@@ -59,7 +59,7 @@ export class CaptureGroup extends MatchGroup {
  */
 export class InlineCodeGroup extends CaptureGroup {
 	// Capture inline code
-	static override readonly regexp: RegExp = /`.*?`/;
+	static override readonly regexp: RegExp = /`.*?`/g;
 	static override readonly regexp_display: RegExp = /`(.*)`/;
 
 	constructor(text: string) {
@@ -87,10 +87,9 @@ export class InlineCodeGroup extends CaptureGroup {
 export class ExternalLinkGroup extends CaptureGroup {
 	// Capture external link while ignoring backslashes
 	static override readonly regexp: RegExp =
-		/(?<!\\)!?(?<!\\)\[.*?(?<!\\)\](?<!\\)\(.*?(?<!\\)\)/;
+		/(?<!\\)!?(?<!\\)\[.*?(?<!\\)\](?<!\\)\(.*?(?<!\\)\)/g;
 	// Match display text between square brackets
-	static override readonly regexp_display: RegExp =
-		/(?<!\\)\[(.*?)(?<!\\)\]/;
+	static override readonly regexp_display: RegExp = /(?<!\\)\[(.*?)(?<!\\)\]/;
 
 	constructor(text: string) {
 		super(text);
@@ -117,10 +116,9 @@ export class ExternalLinkGroup extends CaptureGroup {
 export class InternalLinkGroup extends CaptureGroup {
 	// Capture internal link while ignoring backslashes
 	static override readonly regexp: RegExp =
-		/(?<!\\)!?(?<!\\)\[(?<!\\)\[.*?(?<!\\)\](?<!\\)\]/;
+		/(?<!\\)!?(?<!\\)\[(?<!\\)\[.*?(?<!\\)\](?<!\\)\]/g;
 	// Match text between square brackets and (optionally) after separator
-	static override readonly regexp_display: RegExp =
-		/\[\[(?:.*?(?<!\\)\|)?(.+)\]\]/;
+	static override readonly regexp_display: RegExp = /\[\[(?:.*?(?<!\\)\|)?(.+)\]\]/;
 
 	constructor(text: string) {
 		super(text);
@@ -141,16 +139,46 @@ export class InternalLinkGroup extends CaptureGroup {
 
 
 /**
+ * A CaptureGroup for MathJax expressions in the format `$$e^{2i\pi} = 1$$`.
+ *
+ * Each expression should be on it own line since they are rendered as a
+ * separate line.
+ */
+export class MathJaxGroup extends CaptureGroup {
+	// Capture MathJax expressions while ignoring backslashesA
+	static override readonly regexp: RegExp = /(?<!\\)\$\$.*?(?<!\\)\$\$/g;
+	// Match text between double dollar signs
+	static override readonly regexp_display: RegExp = /\$\$(.*)\$\$/;
+
+	constructor(text: string) {
+		super(text);
+
+		const match = text.match(MathJaxGroup.regexp_display);
+
+		if (match) {
+			this.length = match[1].replaceAll(' ', '').length;
+		}
+	}
+
+	override verifyGroup(text: string): void {
+		if (text.search(MathJaxGroup.regexp) === -1) {
+			throw new MatchGroupError(`${text} is not a MathJax expression`);
+		}
+	}
+}
+
+
+/**
  * A CaptureGroup for inline MathJax expressions in the format
  * `$e^{2i\pi} = 1$`.
  * 
  * The length of expressions are difficult to calculate, so they are given the
  * conservative length of the expression without spaces. Especially long or
- * complex expressions should be using MathJax with double dollar signs.
+ * complex expressions should be a MathJax expression with double dollar signs.
  */
 export class InlineMathJaxGroup extends CaptureGroup {
 	// Capture inline MathJax expressions while ignoring backslashes
-	static override readonly regexp: RegExp = /(?<!\\)\$.*?(?<!\\)\$/;
+	static override readonly regexp: RegExp = /(?<!\\)\$.*?(?<!\\)\$/g;
 	// Match text between dollar signs
 	static override readonly regexp_display: RegExp = /\$(.*)\$/;
 
@@ -166,7 +194,7 @@ export class InlineMathJaxGroup extends CaptureGroup {
 
 	override verifyGroup(text: string): void {
 		if (text.search(InlineMathJaxGroup.regexp) === -1) {
-			throw new MatchGroupError(`${text} is not a MathJax expression`);
+			throw new MatchGroupError(`${text} is not an inline MathJax expression`);
 		}
 	}
 }

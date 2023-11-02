@@ -1,4 +1,4 @@
-import { DISPLAY, URL, ANCHOR, MATHJAX } from './global_strings';
+import { DISPLAY, URL, ANCHOR, INLINE_MATHJAX, MATHJAX } from './global_strings';
 import { EMPTY } from '../global_strings';
 import {
 	MatchGroupError,
@@ -6,6 +6,7 @@ import {
 	InlineCodeGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
+	MathJaxGroup,
 	InlineMathJaxGroup,
 } from '../matchgroup';
 
@@ -168,6 +169,36 @@ describe('InternalLinkGroup', () => {
 });
 
 
+describe('MathJaxGroup', () => {
+	test('empty string', () => {
+		expect(() => new MathJaxGroup(EMPTY)).toThrow(MatchGroupError);
+	});
+
+	test('empty expression', () => {
+		const text = '$$$$';
+		const group: MathJaxGroup = new MathJaxGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(0);
+	});
+
+	test('expression with no spaces', () => {
+		const group: MathJaxGroup = new MathJaxGroup(MATHJAX);
+
+		expect(group.text).toBe(MATHJAX);
+		expect(group.length).toBe(MATHJAX.length - 4);
+	});
+
+	test('expression with spaces', () => {
+		const text = '$$e^{2 i \\pi} = 1$$';
+		const group: MathJaxGroup = new MathJaxGroup(text);
+
+		expect(group.text).toBe(text);
+		expect(group.length).toBe(11);
+	});
+});
+
+
 describe('InlineMathJaxGroup', () => {
 	test('empty string', () => {
 		expect(() => new InlineMathJaxGroup(EMPTY)).toThrow(MatchGroupError);
@@ -182,10 +213,10 @@ describe('InlineMathJaxGroup', () => {
 	});
 
 	test('expression with no spaces', () => {
-		const group: InlineMathJaxGroup = new InlineMathJaxGroup(MATHJAX);
+		const group: InlineMathJaxGroup = new InlineMathJaxGroup(INLINE_MATHJAX);
 
-		expect(group.text).toBe(MATHJAX);
-		expect(group.length).toBe(MATHJAX.length - 2);
+		expect(group.text).toBe(INLINE_MATHJAX);
+		expect(group.length).toBe(INLINE_MATHJAX.length - 2);
 	});
 
 	test('expression with spaces', () => {

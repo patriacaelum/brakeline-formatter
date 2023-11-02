@@ -6,7 +6,8 @@ import {
 	CALLOUT_PREFIX,
 	CODEBLOCK_PREFIX,
 } from '../global_strings';
-import { DISPLAY, URL } from './global_strings';
+import { DISPLAY, URL, MATHJAX } from './global_strings';
+import { MatchGroup, StringGroup, CaptureGroup } from '../matchgroup';
 import { StringFormatter } from '../string_formatter';
 
 
@@ -57,6 +58,33 @@ describe('StringFormatter.format single-line and under limit', () => {
 		const formatted: string = new StringFormatter(text).format();
 
 		expect(formatted).toBe(text);
+	});
+
+	test('no spaces between capture groups', () => {
+		const text = 'this is non-$dx$; and $dy$ is that';
+		const formatted: string = new StringFormatter(text).format();
+
+		expect(formatted).toBe(text);
+	});
+
+	test('MathJax expression', () => {
+		const text = `first line ${MATHJAX} second line`;
+		const formatted: string[] = new StringFormatter(text).format().split(NEWLINE);
+
+		expect(formatted.length).toBe(3);
+		expect(formatted[0]).toBe('first line');
+		expect(formatted[1]).toBe(MATHJAX);
+		expect(formatted[2]).toBe('second line');
+	});
+
+	test('MathJax expression at end of string', () => {
+		const text = `first line ${MATHJAX}`;
+		const formatted: string[] = new StringFormatter(text).format().split(NEWLINE);
+
+		expect(formatted.length).toBe(3);
+		expect(formatted[0]).toBe('first line');
+		expect(formatted[1]).toBe(MATHJAX);
+		expect(formatted[2]).toBe(EMPTY);
 	});
 });
 
@@ -109,6 +137,7 @@ describe('StringFormatter.format multi-line strings', () => {
         const text: string = NEWLINE.repeat(3);
         const formatted: string = new StringFormatter(text).format();
 
+		expect(formatted.split(NEWLINE).length).toBe(4);
         expect(formatted).toBe(text);
     });
 
@@ -197,10 +226,31 @@ describe('StringFormatter.format multi-line strings', () => {
 	test('frontmatter', () => {
 		const text: string = [DASH3, DISPLAY80 + DISPLAY80, DASH3]
 			.join(NEWLINE);
-		const formatter: StringFormatter = new StringFormatter(text);
+		const formatted: string = new StringFormatter(text).format();
 
-		expect(formatter.format()).toBe(text);
+		expect(formatted).toBe(text);
 	});
+
+	test('table-like', () => {
+		const row: string = Array(3).fill(DISPLAY).join(' | ');
+		const text: string = Array(3).fill(row).join(NEWLINE);
+		const formatted: string[] = new StringFormatter(text).format().split(NEWLINE);
+
+		expect(formatted.length).toBe(6);
+	});
+
+	test('table', () => {
+		const row: string = Array(3).fill(DISPLAY).join(' | ');
+		const header = '|:--|:-:|--:|';
+		const text: string = [row, header, row, row].join(NEWLINE);
+		const formatted: string[] = new StringFormatter(text).format().split(NEWLINE);
+
+		expect(formatted.length).toBe(4);
+		expect(formatted[0]).toBe(row);
+		expect(formatted[1]).toBe(header);
+		expect(formatted[2]).toBe(row);
+		expect(formatted[3]).toBe(row);
+	})
 });
 
 
@@ -269,6 +319,73 @@ describe('StringFormatter.formatParagraph over limit', () => {
 		expect(formatter.result[0].startsWith(CALLOUT_PREFIX)).toBeTruthy();
 		expect(formatter.result[1].startsWith(CALLOUT_PREFIX)).toBeTruthy();
 	});
+});
+
+
+describe('StringFormatter.requiresSpace', () => {
+	test('string to string and prior empty', () => {
+		const prior: MatchGroup = new StringGroup(EMPTY);
+		const current: MatchGroup = new StringGroup(DISPLAY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeTruthy();
+	});
+
+	test('string to string and current empty', () => {
+		const prior: MatchGroup = new StringGroup(DISPLAY);
+		const current: MatchGroup = new StringGroup(EMPTY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeTruthy();
+	})
+
+	test('string to capture and prior empty', () => {
+		const prior: MatchGroup = new StringGroup(EMPTY);
+		const current: MatchGroup = new CaptureGroup(DISPLAY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeTruthy();
+	});
+
+	test('string to capture and current empty', () => {
+		const prior: MatchGroup = new StringGroup(DISPLAY);
+		const current: MatchGroup = new CaptureGroup(EMPTY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeFalsy();
+	});
+
+	test('capture to string and prior empty', () => {
+		const prior: MatchGroup = new CaptureGroup(EMPTY);
+		const current: MatchGroup = new StringGroup(DISPLAY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeFalsy();
+	});
+
+	test('capture to string and current empty', () => {
+		const prior: MatchGroup = new CaptureGroup(DISPLAY);
+		const current: MatchGroup = new StringGroup(EMPTY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeTruthy();
+	})
+
+	test('capture to capture and prior empty', () => {
+		const prior: MatchGroup = new CaptureGroup(EMPTY);
+		const current: MatchGroup = new CaptureGroup(DISPLAY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeTruthy();
+	});
+
+	test('capture to capture and current empty', () => {
+		const prior: MatchGroup = new CaptureGroup(DISPLAY);
+		const current: MatchGroup = new CaptureGroup(EMPTY);
+		const formatter: StringFormatter = new StringFormatter(EMPTY);
+
+		expect(formatter.requiresSpace(prior, current)).toBeTruthy();
+	})
 });
 
 
