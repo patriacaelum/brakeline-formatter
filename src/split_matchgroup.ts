@@ -6,15 +6,19 @@ import {
 	InlineCodeGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
+	MathJaxGroup,
 	InlineMathJaxGroup,
 } from './matchgroup';
 
 
+// The order of CaptureGroup matters. The most general group should have a
+// higher priority (assigned a higher number).
 const CAPTURE_GROUPS = new Map<number, typeof CaptureGroup>();
-CAPTURE_GROUPS.set(0, InlineCodeGroup);
-CAPTURE_GROUPS.set(1, ExternalLinkGroup);
+CAPTURE_GROUPS.set(0, InlineMathJaxGroup);
+CAPTURE_GROUPS.set(1, MathJaxGroup);
 CAPTURE_GROUPS.set(2, InternalLinkGroup);
-CAPTURE_GROUPS.set(3, InlineMathJaxGroup);
+CAPTURE_GROUPS.set(3, ExternalLinkGroup);
+CAPTURE_GROUPS.set(4, InlineCodeGroup);
 
 
 /**
@@ -97,8 +101,7 @@ export function splitAllMatchGroups(
 	groups: MatchGroup[],
 	index: number = CAPTURE_GROUPS.size - 1
 ): MatchGroup[] {
-	const group_class: typeof CaptureGroup | undefined = CAPTURE_GROUPS
-		.get(index);
+	const group_class: typeof CaptureGroup | undefined = CAPTURE_GROUPS.get(index);
 
 	if (!group_class) {
 		return splitAllStringGroups(groups);
@@ -108,10 +111,7 @@ export function splitAllMatchGroups(
 
 	for (const group of groups) {
 		if (group instanceof StringGroup) {
-			const subgroup: MatchGroup[] = splitCaptureGroups(
-				group.text,
-				group_class
-			);
+			const subgroup: MatchGroup[] = splitCaptureGroups(group.text, group_class);
 			result.push(...splitAllMatchGroups(subgroup, index - 1));
 		}
 		else {

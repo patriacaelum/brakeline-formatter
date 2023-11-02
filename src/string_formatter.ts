@@ -1,18 +1,12 @@
-import {
-	EMPTY,
-	SPACE,
-	NEWLINE,
-	DASH3,
-	CODEBLOCK_PREFIX,
-} from './global_strings';
+import { EMPTY, SPACE, NEWLINE, DASH3, CODEBLOCK_PREFIX } from './global_strings';
 import { inferIndent, inferLeadingSpaces } from './infer_whitespace';
-import { MatchGroup, StringGroup } from './matchgroup';
+import { MatchGroup, StringGroup, CaptureGroup, MathJaxGroup } from './matchgroup';
 import { splitAllMatchGroups } from './split_matchgroup';
 
 
 const HEADER_PREFIX = /^#+ /;
 const ONLY_WHITESPACE = /^\s*$/;
-const END_WITH_WHITESPACE = /\s$/;
+const TABLE_ROW = /(?<!\[\[.*?)(?<!\\)\|(?!.*?\]\])/;
 
 
 export class StringFormatter {
@@ -66,6 +60,7 @@ export class StringFormatter {
 		const paragraphs: string[] = this.text.split(NEWLINE);
 		let is_frontmatter: boolean = paragraphs[0] === DASH3;
 		let is_codeblock = false;
+		let is_table = false;
 		let newlines = 0;
 
 		for (let i = 0; i < paragraphs.length; i++) {
@@ -84,9 +79,17 @@ export class StringFormatter {
 			}
 
 			// Ignore codeblock
-			[is_codeblock, ignore] = this.formatIfCodeblock(
+			[is_codeblock, ignore] = this.formatIfCodeblock(paragraph, is_codeblock);
+
+			if (ignore) {
+				continue;
+			}
+
+			// Ignore table
+			[is_table, ignore] = this.formatIfTable(
 				paragraph,
-				is_codeblock,
+				paragraphs[i+1],
+				is_table,
 			);
 
 			if (ignore) {
@@ -104,11 +107,10 @@ export class StringFormatter {
 			if (is_header) {
 				// Headers ignore character limit
 				this.result.push(paragraph);
-
-				continue;
 			}
-
-			this.formatParagraph(paragraph);
+			else {
+				this.formatParagraph(paragraph);
+			}
 
 			newlines = this.inferNewlinesAfterLine(is_header);
 		}
@@ -128,10 +130,7 @@ export class StringFormatter {
 	 *     exiting a codeblock, the second value determines if the paragraph
 	 *     was ignored and no further formatting is required.
 	 */
-	formatIfCodeblock(
-		paragraph: string,
-		is_codeblock: boolean,
-	): [boolean, boolean] {
+	formatIfCodeblock(paragraph: string, is_codeblock: boolean): [boolean, boolean] {
 		if (paragraph.startsWith(CODEBLOCK_PREFIX)) {
 			is_codeblock = !is_codeblock;
 
@@ -149,8 +148,46 @@ export class StringFormatter {
 			return [is_codeblock, true];
 		}
 
-
 		return [is_codeblock, false];
+	}
+
+	/**
+	 * Formats the paragraph depending on if it's a table.
+	 *
+	 * Tables start with a line with at least one pipe "|", followed by a line
+	 * with at least a dash "-" and pipe "|". Each subsequent line is a table
+	 * row if it contains at least one pipe "|".
+	 *
+	 * @returns the first value determines if the paragraph is entering or
+	 *     exiting a table, the second values determines if the paragraph was
+	 *     ignored and no further formatting is required.
+	 */
+	formatIfTable(
+		paragraph: string,
+		next_paragraph: string | undefined,
+		is_table: boolean,
+	): [boolean, boolean] {
+		const match = paragraph.match(TABLE_ROW);
+
+		if (match) {
+			let match_header_row = false;
+
+			if (next_paragraph !== undefined) {
+				match_header_row = next_paragraph.includes('-')
+					&& next_paragraph.includes('|');
+			}
+
+			if (match_header_row) {
+				is_table = true;
+			}
+
+			if (is_table) {
+				this.result.push(paragraph);
+				return [true, true];
+			}
+		}
+
+		return [false, false];
 	}
 
 	/**
@@ -171,20 +208,38 @@ export class StringFormatter {
 		const indent: string = current + inferIndent(trimmed);
 
 		// Split paragraph into string groups
-		const groups: MatchGroup[] = splitAllMatchGroups(
-			[new StringGroup(trimmed)]
-		);
+		const groups: MatchGroup[] = splitAllMatchGroups([new StringGroup(trimmed)]);
 
 		// Format paragraph
 		let length: number = current.length;
 
 		for (let i = 0; i < groups.length; i++) {
 			const group: MatchGroup = groups[i];
-			const proposed_length: number = length + 1 + group.length;
+
+			// Special rule for MathJax expression on its own line
+			if (group instanceof MathJaxGroup) {
+				if (current !== indent) {
+					this.result.push(current.trimEnd());
+				}
+
+				this.result.push(group.text.trimEnd());
+
+				current = indent;
+				length = indent.length;
+
+				continue;
+			}
 
 			// Add group text to current line
+			const proposed_length: number = length + 1 + group.length;
+
 			if (proposed_length <= this.character_limit) {
-				if (current.length > 0 && !current.match(END_WITH_WHITESPACE)) {
+				const requires_space: boolean = this.requiresSpace(
+					groups[i-1],
+					groups[i],
+				);
+
+				if (current.length > 0 && !current.endsWith(SPACE) && requires_space) {
 					current += SPACE;
 				}
 
@@ -193,14 +248,32 @@ export class StringFormatter {
 			}
 			else {
 				if (!ONLY_WHITESPACE.test(current)) {
-					this.result.push(current);
+					this.result.push(current.trimEnd());
 				}
+
 				current = indent + group.text;
 				length = indent.length + group.length;
 			}
 		}
 
-		this.result.push(current);
+		if (current === EMPTY || !ONLY_WHITESPACE.test(current)) {
+			this.result.push(current.trimEnd());
+		}
+	}
+
+	requiresSpace(prior: MatchGroup | undefined, current: MatchGroup): boolean {
+		if (prior === undefined) {
+			return false;
+		}
+
+		const string_to_string: boolean = (prior instanceof StringGroup)
+			&& (current instanceof StringGroup);
+		const string_to_capture: boolean = (prior instanceof CaptureGroup)
+			&& (current.text === EMPTY);
+		const capture_to_string: boolean = (prior.text === EMPTY)
+			&& (current instanceof CaptureGroup);
+
+		return string_to_string || string_to_capture || capture_to_string;
 	}
 
 	/**

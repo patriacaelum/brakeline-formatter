@@ -1,5 +1,5 @@
 import { EMPTY } from '../global_strings';
-import { DISPLAY, URL, ANCHOR, MATHJAX } from './global_strings';
+import { DISPLAY, URL, ANCHOR, INLINE_MATHJAX, MATHJAX } from './global_strings';
 import {
 	splitStringGroups,
 	splitAllStringGroups,
@@ -12,6 +12,7 @@ import {
 	InlineCodeGroup,
 	ExternalLinkGroup,
 	InternalLinkGroup,
+	MathJaxGroup,
 	InlineMathJaxGroup,
 } from '../matchgroup';
 
@@ -148,6 +149,16 @@ describe('splitCaptureGroups', () => {
 
 	test('split on MathJax expressions', () => {
 		const text = `${PRETEXT}${MATHJAX}${POSTTEXT}`;
+		const groups: MatchGroup[] = splitCaptureGroups(text, MathJaxGroup);
+
+		expect(groups.length).toBe(3);
+		expect(groups[0]).toBeInstanceOf(StringGroup);
+		expect(groups[1]).toBeInstanceOf(MathJaxGroup);
+		expect(groups[2]).toBeInstanceOf(StringGroup);
+	});
+
+	test('split on inline MathJax expressions', () => {
+		const text = `${PRETEXT}${INLINE_MATHJAX}${POSTTEXT}`;
 		const groups: MatchGroup[] = splitCaptureGroups(text, InlineMathJaxGroup);
 
 		expect(groups.length).toBe(3);
@@ -168,7 +179,7 @@ describe('splitAllMatchGroups', () => {
 	test('split on all match groups', () => {
 		const text: string =
 			`${PRETEXT}${INLINE_CODE}${EXTERNAL_LINK}${INTERNAL_LINK}`
-			+ `${MATHJAX}${POSTTEXT}`;
+			+ `${INLINE_MATHJAX}${POSTTEXT}`;
 		const groups: MatchGroup[] = [new StringGroup(text)];
 		const splits: MatchGroup[] = splitAllMatchGroups(groups);
 
