@@ -267,7 +267,7 @@ describe('StringFormatter.format multi-line strings', () => {
 	});
 
 	test('HTML', () => {
-		const text: string = 
+		const text = 
 `<html>
   <h1>
     ${HEADING}

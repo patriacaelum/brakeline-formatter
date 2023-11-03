@@ -17,10 +17,6 @@ export class StringFormatter {
 	result: string[] = [];
 	formatted: string = EMPTY;
 	
-	ignore_external_links: boolean;
-	ignore_internal_links: boolean;
-	ignore_mathjax_expressions: boolean;
-
 	newlines_before_header: number;
 	newlines_after_header: number;
 
@@ -32,19 +28,11 @@ export class StringFormatter {
 	constructor(
 		text: string,
 		character_limit = 80,
-		ignore_external_links = true,
-		ignore_internal_links = true,
-		ignore_mathjax_expressions = true,
 		newlines_before_header = 1,
 		newlines_after_header = 1,
 	) {
 		this.text = text;
 		this.character_limit = character_limit;
-
-		this.ignore_external_links = ignore_external_links;
-		this.ignore_internal_links = ignore_internal_links;
-		this.ignore_mathjax_expressions = ignore_mathjax_expressions;
-
 		this.newlines_before_header = newlines_before_header;
 		this.newlines_after_header = newlines_after_header;
 	}

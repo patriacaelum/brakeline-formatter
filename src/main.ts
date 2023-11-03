@@ -13,23 +13,15 @@ import { StringFormatter } from './string_formatter';
 
 interface BrakelineFormatterSettings {
 	characterLimit: number;
-	ignoreExternalLinks: boolean;
-	ignoreInternalLinks: boolean;
-	ignoreInlineMathJaxExpressions: boolean;
 	newlinesBeforeHeader: number;
 	newlinesAfterHeader: number;
-	// formatOnEdit: bool
 }
 
 
 const DEFAULT_SETTINGS: BrakelineFormatterSettings = {
 	characterLimit: 80,
-	ignoreExternalLinks: true,
-	ignoreInternalLinks: true,
-	ignoreInlineMathJaxExpressions: true,
 	newlinesBeforeHeader: 1,
 	newlinesAfterHeader: 1,
-	// formatOnEdit: false,
 }
 
 
@@ -63,9 +55,6 @@ export default class BrakelineFormatter extends Plugin {
 				const formatter: StringFormatter = new StringFormatter(
 					text,
 					this.settings.characterLimit,
-					this.settings.ignoreExternalLinks,
-					this.settings.ignoreInternalLinks,
-					this.settings.ignoreInlineMathJaxExpressions,
 					this.settings.newlinesBeforeHeader,
 					this.settings.newlinesAfterHeader,
 				);
@@ -124,39 +113,6 @@ class BrakelineFormatterSettingTab extends PluginSettingTab {
 				})
 			);
 
-		new Setting(containerEl)
-			.setName('Ignore external links')
-			.setDesc('If enabled, only the displayed text in external links links will count toward the character limit')
-			.addToggle(val => val
-				.setValue(this.plugin.settings.ignoreExternalLinks)
-				.onChange(async (value: boolean) => {
-					this.plugin.settings.ignoreExternalLinks = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl)
-			.setName('Ignore internal links')
-			.setDesc('If enabled, only the displayed text in internal links will count toward the character limit')
-			.addToggle(val => val
-				.setValue(this.plugin.settings.ignoreInternalLinks)
-				.onChange(async (value: boolean) => {
-					this.plugin.settings.ignoreInternalLinks = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl)
-			.setName('Ignore inline MathJax expressions')
-			.setDesc('If enabled, only the displayed text in inline MathJax expressions will count count toward the character limit')
-			.addToggle(val => val
-				.setValue(this.plugin.settings.ignoreInlineMathJaxExpressions)
-				.onChange(async (value: boolean) => {
-					this.plugin.settings.ignoreInlineMathJaxExpressions = value;
-					await this.plugin.saveSettings();
-				})
-			);
-		
 		new Setting(containerEl)
 			.setName('Newlines before header')
 			.setDesc('The minimum number of newlines before a header')
