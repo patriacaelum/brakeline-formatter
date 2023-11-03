@@ -5,6 +5,8 @@ import { splitAllMatchGroups } from './split_matchgroup';
 
 
 const HEADER_PREFIX = /^#+ /;
+const HTML_OPEN = /(?<!\\)<(\w+?)/;
+const HTML_CLOSE = /(?<!\\)<\/(\w+?)/;
 const ONLY_WHITESPACE = /^\s*$/;
 const TABLE_ROW = /(?<!\[\[.*?)(?<!\\)\|(?!.*?\]\])/;
 
@@ -61,6 +63,8 @@ export class StringFormatter {
 		let is_frontmatter: boolean = paragraphs[0] === DASH3;
 		let is_codeblock = false;
 		let is_table = false;
+		let is_html = false;
+		let html_tag: string = EMPTY;
 		let newlines = 0;
 
 		for (let i = 0; i < paragraphs.length; i++) {
@@ -93,6 +97,28 @@ export class StringFormatter {
 			);
 
 			if (ignore) {
+				continue;
+			}
+
+			// Ignore HTML
+			if (!is_html) {
+				const match_open = paragraph.match(HTML_OPEN);
+
+				if (match_open) {
+					is_html = true;
+					html_tag = match_open[1];
+				}
+			}
+
+			if (is_html) {
+				const match_close = paragraph.match(HTML_CLOSE);
+
+				if (match_close && match_close[1] === html_tag) {
+					is_html = false;
+				}
+
+				this.result.push(paragraph);
+
 				continue;
 			}
 

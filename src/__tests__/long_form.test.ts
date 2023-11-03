@@ -2,6 +2,7 @@ import { EMPTY, NEWLINE } from '../global_strings';
 import { StringFormatter } from '../string_formatter';
 
 
+/* eslint-disable */
 const TEXT = 
 `---
 date: 2023-03-14
@@ -64,6 +65,7 @@ Find $\\frac{dy}{dx}$ and $\\frac{d^2y}{dx^2} for the following expressions:
 2. $$y = \\frac{x^2 + a}{x + a}$$
 3. $$y = 1 + \\frac{x}{1} + \\frac{x^2}{1 \\times 2} + \\frac{x^3}{1 \\times 2 \\times 3} + \\frac{x^4}{1 \\times 2 \\times 3 \\times 4}$$
 `;
+/* esline-enable */
 
 
 test('long form text', () => {

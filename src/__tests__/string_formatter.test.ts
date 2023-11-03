@@ -86,6 +86,13 @@ describe('StringFormatter.format single-line and under limit', () => {
 		expect(formatted[1]).toBe(MATHJAX);
 		expect(formatted[2]).toBe(EMPTY);
 	});
+
+	test('HTML', () => {
+		const text = `<h1>${HEADING}</h1>`;
+		const formatted: string = new StringFormatter(text).format();
+
+		expect(formatted).toBe(text);
+	});
 });
 
 
@@ -129,6 +136,13 @@ describe('StringFormatter.format single line over limit', () => {
 		expect(formatted[0].startsWith('%% ')).toBeTruthy();
 		expect(formatted[1].startsWith('%% ')).toBeTruthy();
 	});
+
+	test('HTML', () => {
+		const text = `<div color='red'>${DISPLAY80}</div>`
+		const formatted: string = new StringFormatter(text).format();
+
+		expect(formatted).toBe(text);
+	})
 });
 
 
@@ -250,7 +264,32 @@ describe('StringFormatter.format multi-line strings', () => {
 		expect(formatted[1]).toBe(header);
 		expect(formatted[2]).toBe(row);
 		expect(formatted[3]).toBe(row);
-	})
+	});
+
+	test('HTML', () => {
+		const text: string = 
+`<html>
+  <h1>
+    ${HEADING}
+  </h1>
+  <div style='color: red'>
+    <p>${DISPLAY}</p>
+    ${URL3}
+  </div>
+</html>`
+		const formatted: string[] = new StringFormatter(text).format().split(NEWLINE);
+
+		expect(formatted.length).toBe(9);
+		expect(formatted[0]).toBe('<html>');
+		expect(formatted[1]).toBe('  <h1>');
+		expect(formatted[2]).toBe(`    ${HEADING}`);
+		expect(formatted[3]).toBe('  </h1>');
+		expect(formatted[4]).toBe('  <div style=\'color: red\'>');
+		expect(formatted[5]).toBe(`    <p>${DISPLAY}</p>`);
+		expect(formatted[6]).toBe(`    ${URL3}`);
+		expect(formatted[7]).toBe('  </div>');
+		expect(formatted[8]).toBe('</html>');
+	});
 });
 
 
