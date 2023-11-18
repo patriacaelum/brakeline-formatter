@@ -192,6 +192,13 @@ describe('StringFormatter.format multi-line strings', () => {
 		expect(formatted).toBe(text);
 	});
 
+	test('multiple headings', () => {
+		const text: string = [HEADING, HEADING, HEADING].join(NEWLINE + NEWLINE);
+		const formatted: string = new StringFormatter(text).format();
+
+		expect(formatted).toBe(text);
+	});
+
     test('heading as second line', () => {
         const text: string = [DISPLAY, HEADING].join(NEWLINE);
         const formatted: string = new StringFormatter(text).format();
@@ -432,24 +439,24 @@ describe('StringFormatter.inferNewlinesBeforeLine', () => {
     test('not header and no prior result', () => {
         const newlines = 42;
         const formatter: StringFormatter = new StringFormatter(EMPTY);
-		const before: number = formatter.inferNewlinesBeforeLine(newlines, false);
+		const before: number = formatter.inferNewlinesBeforeLine(EMPTY, newlines, false);
 
-        expect(before).toBe(newlines);
+        expect(before).toBe(newlines - 1);
     });
 
     test('not header and prior result', () => {
         const newlines = 42;
         const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.result = Array(3).fill(NEWLINE);
-		const before: number = formatter.inferNewlinesBeforeLine(newlines, false);
+		const before: number = formatter.inferNewlinesBeforeLine(EMPTY, newlines, false);
 
-        expect(before).toBe(newlines);
+        expect(before).toBe(newlines - 1);
     });
 
     test('is header and no prior result', () => {
         const newlines = 42;
         const formatter: StringFormatter = new StringFormatter(EMPTY);
-		const before: number = formatter.inferNewlinesBeforeLine(newlines, true);
+		const before: number = formatter.inferNewlinesBeforeLine(HEADING, newlines, true);
 
         expect(before).toBe(newlines);
     });
@@ -459,7 +466,7 @@ describe('StringFormatter.inferNewlinesBeforeLine', () => {
         const formatter: StringFormatter = new StringFormatter(EMPTY);
         formatter.newlines_before_header = newlines;
         formatter.result = [DISPLAY, NEWLINE, NEWLINE, NEWLINE];
-		const before: number = formatter.inferNewlinesBeforeLine(newlines, true);
+		const before: number = formatter.inferNewlinesBeforeLine(HEADING, newlines, true);
 
         expect(before).toBe(newlines - 3);
     });

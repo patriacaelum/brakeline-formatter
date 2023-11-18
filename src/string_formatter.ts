@@ -115,12 +115,12 @@ export class StringFormatter {
 
 			// Add newlines that need to be added to the begining of this
 			// paragraph
-			newlines = this.inferNewlinesBeforeLine(newlines, is_header);
+			newlines = this.inferNewlinesBeforeLine(paragraph, newlines, is_header);
 			this.result[this.result.length-1] += NEWLINE.repeat(newlines);
 
 			if (is_header) {
 				// Headers ignore character limit
-				this.result.push(paragraph);
+				this.result.push(paragraph.trimEnd());
 			}
 			else {
 				this.formatParagraph(paragraph);
@@ -301,7 +301,11 @@ export class StringFormatter {
 	 * @param newlines: the number of newlines that are required after the
 	 *     previous line.
 	 */
-	inferNewlinesBeforeLine(newlines: number, is_header: boolean): number {
+	inferNewlinesBeforeLine(
+		paragraph: string,
+		newlines: number,
+		is_header: boolean
+	): number {
 		const n_lines: number = this.result.length;
 
 		if (is_header && n_lines > 0) {
@@ -322,6 +326,11 @@ export class StringFormatter {
 	
 			newlines = Math.max(newlines, this.newlines_before_header)
 				- existing_newlines;
+		}
+
+		// If the current line is an empty line, it counts as a newline
+		if (paragraph.trim() === EMPTY) {
+			newlines = Math.max(newlines - 1, 0);
 		}
 
 		return newlines;
